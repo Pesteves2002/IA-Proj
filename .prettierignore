@@ -1,0 +1,4 @@
+# Ignore boilerplate code
+search.py
+takuzu.py
+utils.py

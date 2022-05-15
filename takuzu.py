@@ -112,6 +112,14 @@ class Board:
 
     # TODO: outros metodos da classe
 
+    def __str__(self):
+        board_string = ""
+        for row in self.board:
+            for cell in row:
+                board_string += str(cell) + "\t"
+            board_string += "\n"
+        return board_string
+
 
 class Takuzu(Problem):
     def __init__(self, board: Board):

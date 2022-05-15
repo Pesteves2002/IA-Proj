@@ -7,6 +7,8 @@
 # 00000 Nome2
 
 import sys
+
+from numpy import size
 from search import (
     Problem,
     Node,
@@ -35,9 +37,14 @@ class TakuzuState:
 class Board:
     """Representação interna de um tabuleiro de Takuzu."""
 
+    def __init__(self) -> None:
+        self.board = []
+        self.size = 0
+
     def get_number(self, row: int, col: int) -> int:
         """Devolve o valor na respetiva posição do tabuleiro."""
         # TODO
+
         pass
 
     def adjacent_vertical_numbers(self, row: int, col: int) -> (int, int):
@@ -63,8 +70,16 @@ class Board:
             > from sys import stdin
             > stdin.readline()
         """
-        # TODO
-        pass
+
+        this_board = Board()
+
+        for line in sys.stdin:
+            if this_board.size == 0:
+                this_board.size = line.strip()
+            else:
+                list = line.strip().split("\t")
+                this_board.board.append(list)
+        return this_board
 
     # TODO: outros metodos da classe
 
@@ -110,4 +125,10 @@ if __name__ == "__main__":
     # Usar uma técnica de procura para resolver a instância,
     # Retirar a solução a partir do nó resultante,
     # Imprimir para o standard output no formato indicado.
+
+    board = Board.parse_instance_from_stdin()
+
+    print(board.size)
+    print(board.board)
+
     pass

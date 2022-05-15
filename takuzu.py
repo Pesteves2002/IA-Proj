@@ -6,9 +6,13 @@
 # 00000 Nome1
 # 00000 Nome2
 
+from sqlite3 import Row
 import sys
+from turtle import left, right
+from typing import Tuple
 
 from numpy import size
+from sqlalchemy import column
 from search import (
     Problem,
     Node,
@@ -43,20 +47,43 @@ class Board:
 
     def get_number(self, row: int, col: int) -> int:
         """Devolve o valor na respetiva posição do tabuleiro."""
-        # TODO
-
+        return self.board[row][col]
         pass
 
     def adjacent_vertical_numbers(self, row: int, col: int) -> (int, int):
         """Devolve os valores imediatamente abaixo e acima,
         respectivamente."""
-        # TODO
+        if (row <= 0):
+            upper = None
+            lower = self.board[row+1][col]
+        else:
+            if(row + 1 >= self.size):
+                upper = self.board[row - 1][col]
+                lower = None
+            else:
+                upper = self.board[row - 1][col]
+                lower = self.board[row+1][col]
+
+        return (lower, upper)
         pass
 
     def adjacent_horizontal_numbers(self, row: int, col: int) -> (int, int):
         """Devolve os valores imediatamente à esquerda e à direita,
         respectivamente."""
-        # TODO
+
+        if (col <= 0):
+            left = None
+            right = self.board[row][col+1]
+        else:
+            if(col + 1 >= self.size):
+                left = self.board[row][col - 1]
+                right = None
+            else:
+                left = self.board[row][col - 1]
+                right = self.board[row][col + 1]
+
+        return (left, right)
+
         pass
 
     @staticmethod
@@ -75,10 +102,10 @@ class Board:
 
         for line in sys.stdin:
             if this_board.size == 0:
-                this_board.size = line.strip()
+                this_board.size = int(line.strip())
             else:
-                list = line.strip().split("\t")
-                this_board.board.append(list)
+                new_row = line.strip().split("\t")
+                this_board.board.append(list(map(int, new_row)))
         return this_board
 
     # TODO: outros metodos da classe
@@ -127,8 +154,4 @@ if __name__ == "__main__":
     # Imprimir para o standard output no formato indicado.
 
     board = Board.parse_instance_from_stdin()
-
-    print(board.size)
-    print(board.board)
-
     pass

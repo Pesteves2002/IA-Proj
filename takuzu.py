@@ -6,13 +6,8 @@
 # 00000 Nome1
 # 00000 Nome2
 
-from sqlite3 import Row
 import sys
-from turtle import left, right
-from typing import Tuple
 
-from numpy import size
-from sqlalchemy import column
 from search import (
     Problem,
     Node,
@@ -44,6 +39,7 @@ class Board:
     def __init__(self) -> None:
         self.board = []
         self.size = 0
+        self.spots_left = 0
 
     def get_number(self, row: int, col: int) -> int:
         """Devolve o valor na respetiva posição do tabuleiro."""
@@ -106,6 +102,12 @@ class Board:
             else:
                 new_row = line.strip().split("\t")
                 this_board.board.append(list(map(int, new_row)))
+
+        for row in this_board.board:
+            for cell in row:
+                if (cell == 2):
+                    this_board.spots_left += 1
+
         return this_board
 
     # TODO: outros metodos da classe

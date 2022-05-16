@@ -8,10 +8,13 @@
 
 import sys
 
+from jmespath import search
+
 from search import (
     Problem,
     Node,
     astar_search,
+    breadth_first_graph_search,
     breadth_first_tree_search,
     depth_first_tree_search,
     greedy_search,
@@ -120,17 +123,46 @@ class Board:
             board_string += "\n"
         return board_string
 
+    def get_spots_left(self):
+        return self.spots_left
+
+    def get_blank_spots(self):
+        blank_spots = []
+        for row in range(self.size):
+            for col in range(self.size):
+                if (self.get_number(row, col) == 2):
+                    blank_spots.append((row, col))
+        return blank_spots
+
+    def decrease_spots_left(self):
+        self.spots_left -= 1
+
 
 class Takuzu(Problem):
     def __init__(self, board: Board):
         """O construtor especifica o estado inicial."""
         # TODO
+        self.board = board
+        self.initial = TakuzuState(board)
         pass
 
     def actions(self, state: TakuzuState):
         """Retorna uma lista de ações que podem ser executadas a
         partir do estado passado como argumento."""
         # TODO
+        legal_actions = []
+        print(state.board)
+        blank_spots = state.board.get_blank_spots()
+        for blank_spot in blank_spots:
+            vertical_adjancies = state.board.adjacent_vertical_numbers(
+                blank_spot[0], blank_spot[1])
+            horizontal_adjancies = state.board.adjacent_horizontal_numbers(
+                blank_spot[0], blank_spot[1])
+            if (vertical_adjancies != (0, 0) and horizontal_adjancies != (0, 0)):
+                legal_actions.append((blank_spot[0], blank_spot[1], 0))
+            if (vertical_adjancies != (1, 1) and horizontal_adjancies != (1, 1)):
+                legal_actions.append((blank_spot[0], blank_spot[1], 1))
+        return legal_actions
         pass
 
     def result(self, state: TakuzuState, action):
@@ -139,6 +171,16 @@ class Takuzu(Problem):
         das presentes na lista obtida pela execução de
         self.actions(state)."""
         # TODO
+        actions = self.actions(state)
+        print(actions)
+
+        if (action not in actions):
+            raise "Illegal Move"
+
+        self.board.board[action[0]][action[1]] = action[2]
+        self.board.decrease_spots_left()
+        new_state = TakuzuState(self.board)
+        return new_state
         pass
 
     def goal_test(self, state: TakuzuState):
@@ -146,6 +188,7 @@ class Takuzu(Problem):
         um estado objetivo. Deve verificar se todas as posições do tabuleiro
         estão preenchidas com uma sequência de números adjacentes."""
         # TODO
+        return self.board.get_spots_left() == 0
         pass
 
     def h(self, node: Node):
@@ -164,4 +207,14 @@ if __name__ == "__main__":
     # Imprimir para o standard output no formato indicado.
 
     board = Board.parse_instance_from_stdin()
-    pass
+    print(board)
+
+    problem = Takuzu(board)
+
+    goal_node = depth_first_tree_search(problem)
+
+    print("Is goal?", problem.goal_test(goal_node.state))
+    print("Solution:\n", goal_node.state.board, sep="")
+
+
+pass

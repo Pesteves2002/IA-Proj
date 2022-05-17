@@ -175,7 +175,8 @@ class Takuzu(Problem):
         print(actions)
 
         if (action not in actions):
-            raise "Illegal Move"
+            new_state = TakuzuState(self.board)
+            return new_state
 
         self.board.board[action[0]][action[1]] = action[2]
         self.board.decrease_spots_left()

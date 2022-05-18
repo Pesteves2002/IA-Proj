@@ -8,7 +8,6 @@
 
 import sys
 
-from jmespath import search
 
 from search import (
     Problem,
@@ -43,6 +42,7 @@ class Board:
         self.board = []
         self.size = 0
         self.spots_left = 0
+        self.blank_spots = []
 
     def get_number(self, row: int, col: int) -> int:
         """Devolve o valor na respetiva posição do tabuleiro."""
@@ -111,6 +111,8 @@ class Board:
                 if (cell == 2):
                     this_board.spots_left += 1
 
+        this_board.blank_spots = this_board.get_blank_spots()
+
         return this_board
 
     # TODO: outros metodos da classe
@@ -142,7 +144,6 @@ class Takuzu(Problem):
     def __init__(self, board: Board):
         """O construtor especifica o estado inicial."""
         # TODO
-        self.board = board
         self.initial = TakuzuState(board)
         pass
 
@@ -151,8 +152,7 @@ class Takuzu(Problem):
         partir do estado passado como argumento."""
         # TODO
         legal_actions = []
-        print(state.board)
-        blank_spots = state.board.get_blank_spots()
+        blank_spots = state.board.blank_spots
         for blank_spot in blank_spots:
             vertical_adjancies = state.board.adjacent_vertical_numbers(
                 blank_spot[0], blank_spot[1])
@@ -171,16 +171,19 @@ class Takuzu(Problem):
         das presentes na lista obtida pela execução de
         self.actions(state)."""
         # TODO
-        actions = self.actions(state)
-        print(actions)
 
-        if (action not in actions):
-            new_state = TakuzuState(self.board)
-            return new_state
+        new_board = Board()
+        new_board.size = state.board.size
+        new_board.spots_left = state.board.spots_left
+        for row in state.board.board:
+            new_board.board.append(row[:])
 
-        self.board.board[action[0]][action[1]] = action[2]
-        self.board.decrease_spots_left()
-        new_state = TakuzuState(self.board)
+        new_board.board[action[0]][action[1]] = action[2]
+
+        new_board.blank_spots = state.board.blank_spots[:]
+        new_board.blank_spots.remove((action[0], action[1]))
+        new_board.decrease_spots_left()
+        new_state = TakuzuState(new_board)
         return new_state
         pass
 
@@ -189,7 +192,7 @@ class Takuzu(Problem):
         um estado objetivo. Deve verificar se todas as posições do tabuleiro
         estão preenchidas com uma sequência de números adjacentes."""
         # TODO
-        return self.board.get_spots_left() == 0
+        return state.board.get_spots_left() == 0
         pass
 
     def h(self, node: Node):

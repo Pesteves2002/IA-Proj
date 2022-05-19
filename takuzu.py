@@ -43,6 +43,8 @@ class Board:
         self.size = 0
         self.spots_left = 0
         self.blank_spots = []
+        self.disparity_row = []
+        self.disparity_col = []
 
     def get_number(self, row: int, col: int) -> int:
         """Devolve o valor na respetiva posição do tabuleiro."""
@@ -107,11 +109,19 @@ class Board:
                 this_board.board.append(list(map(int, new_row)))
 
         for row in this_board.board:
+            row_disparity = {"disparity": 0, "blank_spots": 0}
             for cell in row:
+                if (cell == 0):
+                    row_disparity["disparity"] -= 1
+                if (cell == 1):
+                    row_disparity["disparity"] += 1
                 if (cell == 2):
                     this_board.spots_left += 1
-
+                    row_disparity["blank_spots"] += 1
+            this_board.disparity_row.append(row_disparity)
         this_board.blank_spots = this_board.get_blank_spots()
+
+        print(this_board.disparity_row)
 
         return this_board
 

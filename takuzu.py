@@ -6,6 +6,7 @@
 # 00000 Nome1
 # 00000 Nome2
 
+from hashlib import new
 import sys
 
 from numpy import transpose
@@ -135,9 +136,6 @@ class Board:
                     col_disparity["blank_spots"] += 1
             this_board.disparity_col.append(col_disparity)
 
-        print(this_board.disparity_row)
-        print(this_board.disparity_col)
-
         return this_board
 
     # TODO: outros metodos da classe
@@ -166,7 +164,6 @@ class Board:
         if (value == 0):
             value = -1
         # update disparity values
-        print(self.disparity_row)
         self.disparity_row[row]["disparity"] += value
         self.disparity_row[row]["blank_spots"] -= 1
         self.disparity_col[col]["disparity"] += value
@@ -191,6 +188,7 @@ class Takuzu(Problem):
             for i in range(2):
                 legal_actions.append((blank_spot[0], blank_spot[1], i))
 
+        legal_actions = self.disparity(state.board, legal_actions)
         return legal_actions
         pass
 
@@ -203,19 +201,30 @@ class Takuzu(Problem):
             num_to_insert = action[2]
             if num_to_insert == 0:
                 num_to_insert = -1
+
+            # if there's only one spot left to fill, value can be 0(no constraints, odd)
+            # if the disparity is 1 or -1 the num_to_insert can't be the same
             if board.disparity_row[row_value]["blank_spots"] == 1:
-                if (board.disparity_row[row_value]["disparity"] == -1 and num_to_insert == -1):
-                    continue
-                if (board.disparity_row[row_value]["disparity"] == 1 and num_to_insert == 1):
+                if (board.disparity_row[row_value]["disparity"] == num_to_insert):
                     continue
 
             if board.disparity_col[col_value]["blank_spots"] == 1:
-                if (board.disparity_col[col_value]["disparity"] == -1 and num_to_insert == -1):
-                    continue
-                if (board.disparity_col[col_value]["disparity"] == 1 and num_to_insert == 1):
+                if (board.disparity_col[col_value]["disparity"] == num_to_insert):
                     continue
 
+            if board.size % 2 == 0:
+                limit = 0
+            else:
+                limit = 1
+
+            if(abs(board.disparity_row[row_value]["disparity"]) - board.disparity_row[row_value]["blank_spots"] > limit):
+                continue
+
+            if(abs(board.disparity_col[col_value]["disparity"]) - board.disparity_col[col_value]["blank_spots"] > limit):
+                continue
+
             new_legal_actions.append(action)
+
         return new_legal_actions
 
     def result(self, state: TakuzuState, action):
@@ -232,10 +241,10 @@ class Takuzu(Problem):
             new_board.board.append(row[:])
 
         for row in state.board.disparity_row:
-            new_board.disparity_row.append(row[:])
+            new_board.disparity_row.append(dict(row))
 
         for col in state.board.disparity_col:
-            new_board.disparity_col.append(col[:])
+            new_board.disparity_col.append(dict(col))
 
         new_board.board[action[0]][action[1]] = action[2]
 
@@ -275,6 +284,9 @@ if __name__ == "__main__":
     problem = Takuzu(board)
 
     goal_node = depth_first_tree_search(problem)
+
+    print(goal_node.state.board.disparity_col)
+    print(goal_node.state.board.disparity_row)
 
     print("Is goal?", problem.goal_test(goal_node.state))
     print("Solution:\n", goal_node.state.board, sep="")

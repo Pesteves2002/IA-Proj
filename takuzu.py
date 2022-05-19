@@ -135,6 +135,9 @@ class Board:
                     col_disparity["blank_spots"] += 1
             this_board.disparity_col.append(col_disparity)
 
+        print(this_board.disparity_row)
+        print(this_board.disparity_col)
+
         return this_board
 
     # TODO: outros metodos da classe
@@ -158,8 +161,16 @@ class Board:
                     blank_spots.append((row, col))
         return blank_spots
 
-    def decrease_spots_left(self):
+    def decrease_spots_left(self, row, col, value):
         self.spots_left -= 1
+        if (value == 0):
+            value = -1
+        # update disparity values
+        print(self.disparity_row)
+        self.disparity_row[row]["disparity"] += value
+        self.disparity_row[row]["blank_spots"] -= 1
+        self.disparity_col[col]["disparity"] += value
+        self.disparity_col[col]["blank_spots"] -= 1
 
 
 class Takuzu(Problem):
@@ -190,8 +201,21 @@ class Takuzu(Problem):
             row_value = action[0]
             col_value = action[1]
             num_to_insert = action[2]
-            if board.:
+            if num_to_insert == 0:
+                num_to_insert = -1
+            if board.disparity_row[row_value]["blank_spots"] == 1:
+                if (board.disparity_row[row_value]["disparity"] == -1 and num_to_insert == -1):
+                    continue
+                if (board.disparity_row[row_value]["disparity"] == 1 and num_to_insert == 1):
+                    continue
 
+            if board.disparity_col[col_value]["blank_spots"] == 1:
+                if (board.disparity_col[col_value]["disparity"] == -1 and num_to_insert == -1):
+                    continue
+                if (board.disparity_col[col_value]["disparity"] == 1 and num_to_insert == 1):
+                    continue
+
+            new_legal_actions.append(action)
         return new_legal_actions
 
     def result(self, state: TakuzuState, action):
@@ -207,11 +231,17 @@ class Takuzu(Problem):
         for row in state.board.board:
             new_board.board.append(row[:])
 
+        for row in state.board.disparity_row:
+            new_board.disparity_row.append(row[:])
+
+        for col in state.board.disparity_col:
+            new_board.disparity_col.append(col[:])
+
         new_board.board[action[0]][action[1]] = action[2]
 
         new_board.blank_spots = state.board.blank_spots[:]
         new_board.blank_spots.remove((action[0], action[1]))
-        new_board.decrease_spots_left()
+        new_board.decrease_spots_left(action[0], action[1], action[2])
         new_state = TakuzuState(new_board)
         return new_state
         pass

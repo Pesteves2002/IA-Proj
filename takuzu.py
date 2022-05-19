@@ -8,6 +8,7 @@
 
 import sys
 
+from numpy import transpose
 
 from search import (
     Problem,
@@ -121,7 +122,18 @@ class Board:
             this_board.disparity_row.append(row_disparity)
         this_board.blank_spots = this_board.get_blank_spots()
 
-        print(this_board.disparity_row)
+        board_transposed = transpose(this_board.board)
+
+        for col in board_transposed:
+            col_disparity = {"disparity": 0, "blank_spots": 0}
+            for cell in col:
+                if (cell == 0):
+                    col_disparity["disparity"] -= 1
+                if (cell == 1):
+                    col_disparity["disparity"] += 1
+                if (cell == 2):
+                    col_disparity["blank_spots"] += 1
+            this_board.disparity_col.append(col_disparity)
 
         return this_board
 
@@ -163,17 +175,24 @@ class Takuzu(Problem):
         # TODO
         legal_actions = []
         blank_spots = state.board.blank_spots
+        legal_actions = []
         for blank_spot in blank_spots:
-            vertical_adjancies = state.board.adjacent_vertical_numbers(
-                blank_spot[0], blank_spot[1])
-            horizontal_adjancies = state.board.adjacent_horizontal_numbers(
-                blank_spot[0], blank_spot[1])
-            if (vertical_adjancies != (0, 0) and horizontal_adjancies != (0, 0)):
-                legal_actions.append((blank_spot[0], blank_spot[1], 0))
-            if (vertical_adjancies != (1, 1) and horizontal_adjancies != (1, 1)):
-                legal_actions.append((blank_spot[0], blank_spot[1], 1))
+            for i in range(2):
+                legal_actions.append((blank_spot[0], blank_spot[1], i))
+
         return legal_actions
         pass
+
+    def disparity(self, board, actions):
+        new_legal_actions = []
+
+        for action in actions:
+            row_value = action[0]
+            col_value = action[1]
+            num_to_insert = action[2]
+            if board.:
+
+        return new_legal_actions
 
     def result(self, state: TakuzuState, action):
         """Retorna o estado resultante de executar a 'action' sobre

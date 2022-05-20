@@ -6,10 +6,10 @@
 # 00000 Nome1
 # 00000 Nome2
 
-from hashlib import new
 import sys
 
 from numpy import transpose
+from numpy import floor
 
 from search import (
     Problem,
@@ -56,7 +56,7 @@ class Board:
 
     def get_number(self, row: int, col: int) -> int:
         """Devolve o valor na respetiva posição do tabuleiro."""
-        if (row >= self.size or col >= self.size):
+        if (row >= self.size or col >= self.size or row < 0 or col < 0):
             return 2
         return self.board[row][col]
         pass
@@ -204,7 +204,6 @@ class Takuzu(Problem):
                     legal_actions.append((blank_spot[0], blank_spot[1], i))
 
             # legal_actions = self.disparity(state.board, legal_actions)
-
         return legal_actions
         pass
 
@@ -223,7 +222,15 @@ class Takuzu(Problem):
                     return [(row_value, col_value, 1)]
                 if (board.disparity_col[col_value]["number_1"] == board.size/2):
                     return [(row_value, col_value, 0)]
-
+            else:
+                if (board.disparity_row[row_value]["number_0"] == (int(floor(board.size/2)) + 1)):
+                    return [(row_value, col_value, 1)]
+                if (board.disparity_row[row_value]["number_1"] == (int(floor(board.size/2)) + 1)):
+                    return [(row_value, col_value, 0)]
+                if (board.disparity_col[col_value]["number_0"] == (int(floor(board.size/2)) + 1)):
+                    return [(row_value, col_value, 1)]
+                if (board.disparity_col[col_value]["number_1"] == (int(floor(board.size/2)) + 1)):
+                    return [(row_value, col_value, 0)]
             # left
             if (board.get_number(row_value, col_value - 2) == board.get_number(row_value, col_value - 1) != 2):
                 return [(row_value, col_value, complementary_value(board.get_number(row_value, col_value - 1)))]
@@ -241,6 +248,7 @@ class Takuzu(Problem):
 
             # below
             if (board.get_number(row_value + 2, col_value) == board.get_number(row_value + 1, col_value) != 2):
+
                 return [(row_value, col_value, complementary_value(board.get_number(row_value + 1, col_value)))]
 
             # middle vertical

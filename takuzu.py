@@ -23,6 +23,12 @@ from search import (
 )
 
 
+def complementary_value(value):
+    if (value == 0):
+        return 1
+    return 0
+
+
 class TakuzuState:
     state_id = 0
 
@@ -50,6 +56,8 @@ class Board:
 
     def get_number(self, row: int, col: int) -> int:
         """Devolve o valor na respetiva posição do tabuleiro."""
+        if (row >= self.size or col >= self.size):
+            return 3
         return self.board[row][col]
         pass
 
@@ -111,12 +119,12 @@ class Board:
                 this_board.board.append(list(map(int, new_row)))
 
         for row in this_board.board:
-            row_disparity = {"disparity": 0, "blank_spots": 0}
+            row_disparity = {"number_0": 0, "number_1": 0, "blank_spots": 0}
             for cell in row:
                 if (cell == 0):
-                    row_disparity["disparity"] -= 1
+                    row_disparity["number_0"] += 1
                 if (cell == 1):
-                    row_disparity["disparity"] += 1
+                    row_disparity["number_1"] += 1
                 if (cell == 2):
                     this_board.spots_left += 1
                     row_disparity["blank_spots"] += 1
@@ -126,12 +134,12 @@ class Board:
         board_transposed = transpose(this_board.board)
 
         for col in board_transposed:
-            col_disparity = {"disparity": 0, "blank_spots": 0}
+            col_disparity = {"number_0": 0, "number_1": 0, "blank_spots": 0}
             for cell in col:
                 if (cell == 0):
-                    col_disparity["disparity"] -= 1
+                    col_disparity["number_0"] += 1
                 if (cell == 1):
-                    col_disparity["disparity"] += 1
+                    col_disparity["number_1"] += 1
                 if (cell == 2):
                     col_disparity["blank_spots"] += 1
             this_board.disparity_col.append(col_disparity)
@@ -161,12 +169,15 @@ class Board:
 
     def decrease_spots_left(self, row, col, value):
         self.spots_left -= 1
-        if (value == 0):
-            value = -1
         # update disparity values
-        self.disparity_row[row]["disparity"] += value
+        if (value == 0):
+            self.disparity_row[row]["number_0"] += 1
+            self.disparity_col[col]["number_0"] += 1
+        else:
+            self.disparity_row[row]["number_1"] += 1
+            self.disparity_col[col]["number_1"] += 1
+
         self.disparity_row[row]["blank_spots"] -= 1
-        self.disparity_col[col]["disparity"] += value
         self.disparity_col[col]["blank_spots"] -= 1
 
 
@@ -183,14 +194,49 @@ class Takuzu(Problem):
         # TODO
         legal_actions = []
         blank_spots = state.board.blank_spots
-        legal_actions = []
-        for blank_spot in blank_spots:
-            for i in range(2):
-                legal_actions.append((blank_spot[0], blank_spot[1], i))
 
-        legal_actions = self.disparity(state.board, legal_actions)
+        legal_actions = self.find_mandatory_place(state.board, blank_spots)
+
+        if legal_actions == []:
+
+            for blank_spot in blank_spots:
+                for i in range(2):
+                    legal_actions.append((blank_spot[0], blank_spot[1], i))
+
+            legal_actions = self.disparity(state.board, legal_actions)
+
         return legal_actions
         pass
+
+    def find_mandatory_place(self, board, blank_spots):
+        for blank_spot in blank_spots:
+            row_value = blank_spot[0]
+            col_value = blank_spot[1]
+
+            # left
+            if (board.get_number(row_value, col_value - 2) == board.get_number(row_value, col_value - 1) != 2):
+                return [(row_value, col_value, complementary_value(board.get_number(row_value, col_value - 1)))]
+            # right
+            if (board.get_number(row_value, col_value + 2) == board.get_number(row_value, col_value + 1) != 2):
+                return [(row_value, col_value, complementary_value(board.get_number(row_value, col_value + 1)))]
+
+            # middle horizontal
+            if (board.get_number(row_value, col_value + 1) == board.get_number(row_value, col_value - 1) != 2):
+                return [(row_value, col_value, complementary_value(board.get_number(row_value, col_value - 1)))]
+
+            # above
+            if (board.get_number(row_value - 2, col_value) == board.get_number(row_value - 1, col_value) != 2):
+                return [(row_value, col_value, complementary_value(board.get_number(row_value - 1, col_value)))]
+
+            # below
+            if (board.get_number(row_value + 2, col_value) == board.get_number(row_value + 1, col_value) != 2):
+                return [(row_value, col_value, complementary_value(board.get_number(row_value + 1, col_value)))]
+
+            # middle vertical
+            if (board.get_number(row_value + 1, col_value) == board.get_number(row_value - 1, col_value) != 2):
+                return [(row_value, col_value, complementary_value(board.get_number(row_value - 1, col_value)))]
+
+        return []
 
     def disparity(self, board, actions):
         new_legal_actions = []

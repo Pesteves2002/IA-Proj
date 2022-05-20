@@ -53,6 +53,9 @@ class Board:
         self.blank_spots = []
         self.disparity_row = []
         self.disparity_col = []
+        self.row_binary = []
+        self.col_binary = []
+        self.valid = True
 
     def get_number(self, row: int, col: int) -> int:
         """Devolve o valor na respetiva posição do tabuleiro."""
@@ -182,6 +185,29 @@ class Board:
         self.disparity_row[row]["blank_spots"] -= 1
         self.disparity_col[col]["blank_spots"] -= 1
 
+        if (self.disparity_row[row]["blank_spots"] == 0):
+            sum = 0
+            i = self.size - 1
+            for value in self.board[row]:
+                sum += value * (2 ** i)
+                i -= 1
+            if sum not in self.row_binary:
+                self.row_binary.append(sum)
+            else:
+                self.valid = False
+
+        if (self.disparity_col[col]["blank_spots"] == 0):
+            sum = 0
+            i = self.size - 1
+            board_transpose = transpose(self.board)
+            for value in board_transpose[col]:
+                sum += value * (2 ** i)
+                i -= 1
+            if sum not in self.col_binary:
+                self.col_binary.append(sum)
+            else:
+                self.valid = False
+
 
 class Takuzu(Problem):
     def __init__(self, board: Board):
@@ -194,6 +220,9 @@ class Takuzu(Problem):
         """Retorna uma lista de ações que podem ser executadas a
         partir do estado passado como argumento."""
         # TODO
+
+        if not state.board.valid:
+            return []
         blank_spots = state.board.blank_spots
 
         legal_actions = self.find_mandatory_place(state.board, blank_spots)
@@ -313,8 +342,12 @@ class Takuzu(Problem):
 
         new_board.board[action[0]][action[1]] = action[2]
 
+        new_board.row_binary = state.board.row_binary[:]
+        new_board.col_binary = state.board.col_binary[:]
+
         new_board.blank_spots = state.board.blank_spots[:]
         new_board.blank_spots.remove((action[0], action[1]))
+        new_board.valid = state.board.valid
         new_board.decrease_spots_left(action[0], action[1], action[2])
         new_state = TakuzuState(new_board)
         return new_state

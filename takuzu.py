@@ -57,7 +57,7 @@ class Board:
     def get_number(self, row: int, col: int) -> int:
         """Devolve o valor na respetiva posição do tabuleiro."""
         if (row >= self.size or col >= self.size):
-            return 3
+            return 2
         return self.board[row][col]
         pass
 
@@ -153,8 +153,10 @@ class Board:
         for row in self.board:
             for cell in row:
                 board_string += str(cell) + "\t"
+            board_string = board_string[:-1]
             board_string += "\n"
-        return board_string
+
+        return board_string[:-1]
 
     def get_spots_left(self):
         return self.spots_left
@@ -192,18 +194,16 @@ class Takuzu(Problem):
         """Retorna uma lista de ações que podem ser executadas a
         partir do estado passado como argumento."""
         # TODO
-        legal_actions = []
         blank_spots = state.board.blank_spots
 
         legal_actions = self.find_mandatory_place(state.board, blank_spots)
 
         if legal_actions == []:
-
             for blank_spot in blank_spots:
                 for i in range(2):
                     legal_actions.append((blank_spot[0], blank_spot[1], i))
 
-            legal_actions = self.disparity(state.board, legal_actions)
+            # legal_actions = self.disparity(state.board, legal_actions)
 
         return legal_actions
         pass
@@ -212,6 +212,17 @@ class Takuzu(Problem):
         for blank_spot in blank_spots:
             row_value = blank_spot[0]
             col_value = blank_spot[1]
+
+            # In case all values of the other number are already filled we can just put the complementary
+            if (board.size % 2 == 0):
+                if (board.disparity_row[row_value]["number_0"] == board.size/2):
+                    return [(row_value, col_value, 1)]
+                if (board.disparity_row[row_value]["number_1"] == board.size/2):
+                    return [(row_value, col_value, 0)]
+                if (board.disparity_col[col_value]["number_0"] == board.size/2):
+                    return [(row_value, col_value, 1)]
+                if (board.disparity_col[col_value]["number_1"] == board.size/2):
+                    return [(row_value, col_value, 0)]
 
             # left
             if (board.get_number(row_value, col_value - 2) == board.get_number(row_value, col_value - 1) != 2):
@@ -325,17 +336,12 @@ if __name__ == "__main__":
     # Imprimir para o standard output no formato indicado.
 
     board = Board.parse_instance_from_stdin()
-    print(board)
 
     problem = Takuzu(board)
 
     goal_node = depth_first_tree_search(problem)
 
-    print(goal_node.state.board.disparity_col)
-    print(goal_node.state.board.disparity_row)
-
-    print("Is goal?", problem.goal_test(goal_node.state))
-    print("Solution:\n", goal_node.state.board, sep="")
+    print(goal_node.state.board)
 
 
 pass

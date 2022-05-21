@@ -196,6 +196,13 @@ class Board:
             else:
                 self.valid = False
 
+            if self.size % 2 == 0:
+                if (self.disparity_row[row]["number_0"] != self.disparity_row[row]["number_1"]):
+                    self.valid = False
+            else:
+                if (abs(self.disparity_row[row]["number_0"] - self.disparity_row[row]["number_1"]) != 1):
+                    self.valid = False
+
         if (self.disparity_col[col]["blank_spots"] == 0):
             sum = 0
             i = self.size - 1
@@ -207,6 +214,12 @@ class Board:
                 self.col_binary.append(sum)
             else:
                 self.valid = False
+            if self.size % 2 == 0:
+                if (self.disparity_col[col]["number_0"] != self.disparity_col[col]["number_1"]):
+                    self.valid = False
+            else:
+                if (abs(self.disparity_col[col]["number_0"] - self.disparity_col[col]["number_1"]) != 1):
+                    self.valid = False
 
 
 class Takuzu(Problem):
@@ -232,7 +245,11 @@ class Takuzu(Problem):
                 for i in range(2):
                     legal_actions.append((blank_spot[0], blank_spot[1], i))
 
+            actions = self.check_3_inline(state.board, legal_actions)
+            legal_actions = self.disparity(state.board, actions)
+
             # legal_actions = self.disparity(state.board, legal_actions)
+
         return legal_actions
         pass
 
@@ -296,29 +313,52 @@ class Takuzu(Problem):
             if num_to_insert == 0:
                 num_to_insert = -1
 
-            # if there's only one spot left to fill, value can be 0(no constraints, odd)
-            # if the disparity is 1 or -1 the num_to_insert can't be the same
-            if board.disparity_row[row_value]["blank_spots"] == 1:
-                if (board.disparity_row[row_value]["disparity"] == num_to_insert):
-                    continue
-
-            if board.disparity_col[col_value]["blank_spots"] == 1:
-                if (board.disparity_col[col_value]["disparity"] == num_to_insert):
-                    continue
-
             if board.size % 2 == 0:
                 limit = 0
             else:
                 limit = 1
 
-            if(abs(board.disparity_row[row_value]["disparity"]) - board.disparity_row[row_value]["blank_spots"] > limit):
+            value_row = abs(
+                board.disparity_row[row_value]["number_0"] - board.disparity_row[row_value]["number_1"])
+            value_col = abs(
+                board.disparity_col[col_value]["number_0"] - board.disparity_col[col_value]["number_1"])
+
+            if(value_row - board.disparity_row[row_value]["blank_spots"] > limit):
                 continue
 
-            if(abs(board.disparity_col[col_value]["disparity"]) - board.disparity_col[col_value]["blank_spots"] > limit):
+            if(value_col - board.disparity_col[col_value]["blank_spots"] > limit):
                 continue
 
             new_legal_actions.append(action)
 
+        return new_legal_actions
+
+    def check_3_inline(self, board, actions):
+        new_legal_actions = []
+        for legal_action in actions:
+            row_value = legal_action[0]
+            col_value = legal_action[1]
+            num_to_insert = legal_action[2]
+            # left
+            if (board.get_number(row_value, col_value - 2) == num_to_insert == board.get_number(row_value, col_value - 1)):
+                continue
+            # right
+            if (board.get_number(row_value, col_value + 2) == num_to_insert == board.get_number(row_value, col_value + 1)):
+                continue
+            # middle horizontal
+            if (board.get_number(row_value, col_value + 1) == num_to_insert == board.get_number(row_value, col_value - 1)):
+                continue
+            # above
+            if (board.get_number(row_value - 2, col_value) == num_to_insert == board.get_number(row_value - 1, col_value)):
+                continue
+            # below
+            if (board.get_number(row_value + 2, col_value) == num_to_insert == board.get_number(row_value + 1, col_value)):
+                continue
+            # middle vertical
+            if (board.get_number(row_value + 1, col_value) == num_to_insert == board.get_number(row_value - 1, col_value)):
+                continue
+
+            new_legal_actions.append(legal_action)
         return new_legal_actions
 
     def result(self, state: TakuzuState, action):
@@ -383,6 +423,7 @@ if __name__ == "__main__":
     goal_node = depth_first_tree_search(problem)
 
     print(goal_node.state.board)
+print(goal_node.state.board.disparity_row)print(goal_node.state.board.disparity_col)
 
 
 pass

@@ -249,7 +249,6 @@ class Takuzu(Problem):
             legal_actions = self.disparity(state.board, actions)
 
             # legal_actions = self.disparity(state.board, legal_actions)
-
         return legal_actions
         pass
 
@@ -261,22 +260,38 @@ class Takuzu(Problem):
             # In case all values of the other number are already filled we can just put the complementary
             if (board.size % 2 == 0):
                 if (board.disparity_row[row_value]["number_0"] == board.size/2):
-                    return [(row_value, col_value, 1)]
+                    if (self.check_3_inline(board, [(row_value, col_value, 1)]) == []):
+                        board.valid = False
+                    return[(row_value, col_value, 1)]
                 if (board.disparity_row[row_value]["number_1"] == board.size/2):
-                    return [(row_value, col_value, 0)]
+                    if (self.check_3_inline(board, [(row_value, col_value, 0)]) == []):
+                        board.valid = False
+                    return[(row_value, col_value, 0)]
                 if (board.disparity_col[col_value]["number_0"] == board.size/2):
-                    return [(row_value, col_value, 1)]
+                    if (self.check_3_inline(board, [(row_value, col_value, 1)]) == []):
+                        board.valid = False
+                    return[(row_value, col_value, 1)]
                 if (board.disparity_col[col_value]["number_1"] == board.size/2):
-                    return [(row_value, col_value, 0)]
+                    if (self.check_3_inline(board, [(row_value, col_value, 0)]) == []):
+                        board.valid = False
+                    return[(row_value, col_value, 0)]
             else:
                 if (board.disparity_row[row_value]["number_0"] == (int(floor(board.size/2)) + 1)):
-                    return [(row_value, col_value, 1)]
+                    if (self.check_3_inline(board, [(row_value, col_value, 1)]) == []):
+                        board.valid = False
+                    return[(row_value, col_value, 1)]
                 if (board.disparity_row[row_value]["number_1"] == (int(floor(board.size/2)) + 1)):
-                    return [(row_value, col_value, 0)]
+                    if (self.check_3_inline(board, [(row_value, col_value, 0)]) == []):
+                        board.valid = False
+                    return[(row_value, col_value, 0)]
                 if (board.disparity_col[col_value]["number_0"] == (int(floor(board.size/2)) + 1)):
-                    return [(row_value, col_value, 1)]
+                    if (self.check_3_inline(board, [(row_value, col_value, 1)]) == []):
+                        board.valid = False
+                    return[(row_value, col_value, 1)]
                 if (board.disparity_col[col_value]["number_1"] == (int(floor(board.size/2)) + 1)):
-                    return [(row_value, col_value, 0)]
+                    if (self.check_3_inline(board, [(row_value, col_value, 0)]) == []):
+                        board.valid = False
+                    return[(row_value, col_value, 0)]
             # left
             if (board.get_number(row_value, col_value - 2) == board.get_number(row_value, col_value - 1) != 2):
                 return [(row_value, col_value, complementary_value(board.get_number(row_value, col_value - 1)))]
@@ -398,7 +413,7 @@ class Takuzu(Problem):
         um estado objetivo. Deve verificar se todas as posições do tabuleiro
         estão preenchidas com uma sequência de números adjacentes."""
         # TODO
-        return state.board.get_spots_left() == 0
+        return state.board.get_spots_left() == 0 and state.board.valid
         pass
 
     def h(self, node: Node):
@@ -423,7 +438,11 @@ if __name__ == "__main__":
     goal_node = depth_first_tree_search(problem)
 
     print(goal_node.state.board)
-print(goal_node.state.board.disparity_row)print(goal_node.state.board.disparity_col)
+    # print(goal_node.state.board.disparity_row)
+    # print(goal_node.state.board.disparity_col)
+    # print(goal_node.state.board.valid)
+    # print(goal_node.state.board.row_binary)
+    # print(goal_node.state.board.col_binary)
 
 
 pass

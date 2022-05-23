@@ -478,7 +478,6 @@ if __name__ == "__main__":
 
     print(goal_node.state.board)
 
-    sys.exit(0)
     # print(goal_node.state.board.disparity_row)
     # print(goal_node.state.board.disparity_col)
     # print(goal_node.state.board.valid)
@@ -499,4 +498,4 @@ def play(input):
 
     print(goal_node.state.board)
 
-    return 0
+    return goal_node.state.board.board

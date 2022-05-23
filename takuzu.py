@@ -101,6 +101,45 @@ class Board:
         pass
 
     @staticmethod
+    def read(input):
+
+        this_board = Board()
+
+        for line in input.split("\n"):
+            if this_board.size == 0:
+                this_board.size = int(line.strip())
+            else:
+                new_row = line.strip().split("\t")
+                this_board.board.append(list(map(int, new_row)))
+
+        for row in this_board.board:
+            row_disparity = {"number_0": 0, "number_1": 0, "blank_spots": 0}
+            for cell in row:
+                if (cell == 0):
+                    row_disparity["number_0"] += 1
+                if (cell == 1):
+                    row_disparity["number_1"] += 1
+                if (cell == 2):
+                    this_board.spots_left += 1
+                    row_disparity["blank_spots"] += 1
+            this_board.disparity_row.append(row_disparity)
+        this_board.blank_spots = this_board.get_blank_spots()
+
+        board_transposed = transpose(this_board.board)
+
+        for col in board_transposed:
+            col_disparity = {"number_0": 0, "number_1": 0, "blank_spots": 0}
+            for cell in col:
+                if (cell == 0):
+                    col_disparity["number_0"] += 1
+                if (cell == 1):
+                    col_disparity["number_1"] += 1
+                if (cell == 2):
+                    col_disparity["blank_spots"] += 1
+            this_board.disparity_col.append(col_disparity)
+        return this_board
+
+    @staticmethod
     def parse_instance_from_stdin():
         """Lê o test do standard input (stdin) que é passado como argumento
         e retorna uma instância da classe Board.
@@ -438,6 +477,8 @@ if __name__ == "__main__":
     goal_node = depth_first_tree_search(problem)
 
     print(goal_node.state.board)
+
+    sys.exit(0)
     # print(goal_node.state.board.disparity_row)
     # print(goal_node.state.board.disparity_col)
     # print(goal_node.state.board.valid)
@@ -446,3 +487,16 @@ if __name__ == "__main__":
 
 
 pass
+
+
+def play(input):
+
+    board = Board.read(input)
+
+    problem = Takuzu(board)
+
+    goal_node = depth_first_tree_search(problem)
+
+    print(goal_node.state.board)
+
+    return 0

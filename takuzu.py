@@ -2,14 +2,13 @@
 # Devem alterar as classes e funções neste ficheiro de acordo com as instruções do enunciado.
 # Além das funções e classes já definidas, podem acrescentar outras que considerem pertinentes.
 
-# Grupo 00:
-# 00000 Nome1
-# 00000 Nome2
+# Grupo 02:
+# 99202 Diogo Melita
+# 99341 Tomás Esteves
 
 import sys
 
-from numpy import transpose
-from numpy import floor
+from numpy import transpose, floor
 
 from search import (
     Problem,
@@ -62,7 +61,6 @@ class Board:
         if (row >= self.size or col >= self.size or row < 0 or col < 0):
             return 2
         return self.board[row][col]
-        pass
 
     def adjacent_vertical_numbers(self, row: int, col: int) -> (int, int):
         """Devolve os valores imediatamente abaixo e acima,
@@ -79,7 +77,6 @@ class Board:
                 lower = self.board[row+1][col]
 
         return (lower, upper)
-        pass
 
     def adjacent_horizontal_numbers(self, row: int, col: int) -> (int, int):
         """Devolve os valores imediatamente à esquerda e à direita,
@@ -97,8 +94,6 @@ class Board:
                 right = self.board[row][col + 1]
 
         return (left, right)
-
-        pass
 
     @staticmethod
     def parse_instance_from_stdin():
@@ -152,6 +147,7 @@ class Board:
     # TODO: outros metodos da classe
 
     def __str__(self):
+        """Devolve string com a representação de output do tabuleiro."""
         board_string = ""
         for row in self.board:
             for cell in row:
@@ -161,10 +157,12 @@ class Board:
 
         return board_string[:-1]
 
-    def get_spots_left(self):
+    def get_spots_left(self) -> int:
+        """Devolve o número de lugares vazios do tabuleiro."""
         return self.spots_left
 
     def get_blank_spots(self):
+        """Devolve as coordenadas das posições livres do tabuleiro."""
         blank_spots = []
         for row in range(self.size):
             for col in range(self.size):
@@ -172,7 +170,8 @@ class Board:
                     blank_spots.append((row, col))
         return blank_spots
 
-    def decrease_spots_left(self, row, col, value):
+    def decrease_spots_left(self, row: int, col: int, value: int):
+        """Processa tudo sobre introduzir um número ao tabuleiro."""
         self.spots_left -= 1
         # update disparity values
         if (value == 0):
@@ -225,14 +224,12 @@ class Board:
 class Takuzu(Problem):
     def __init__(self, board: Board):
         """O construtor especifica o estado inicial."""
-        # TODO
         self.initial = TakuzuState(board)
         pass
 
     def actions(self, state: TakuzuState):
         """Retorna uma lista de ações que podem ser executadas a
         partir do estado passado como argumento."""
-        # TODO
 
         if not state.board.valid:
             return []
@@ -245,10 +242,6 @@ class Takuzu(Problem):
                 for i in range(2):
                     legal_actions.append((blank_spot[0], blank_spot[1], i))
 
-            actions = self.check_3_inline(state.board, legal_actions)
-            legal_actions = self.disparity(state.board, actions)
-
-            # legal_actions = self.disparity(state.board, legal_actions)
         return legal_actions
         pass
 

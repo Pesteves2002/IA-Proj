@@ -238,15 +238,20 @@ class Takuzu(Problem):
         """Retorna uma lista de ações que podem ser executadas a
         partir do estado passado como argumento."""
 
+        # Se o tabuleiro for inválido não se retorna ações
         if not state.board.valid:
             return []
+
         blank_spots = state.board.blank_spots
 
+        # Procura alguma ação obrigatória
         legal_actions = self.find_mandatory_place(state.board, blank_spots)
 
+        # Se não há ações obrigatória, envia-se o par de ações da próxima casa vazia
         if legal_actions == []:
             for i in range(2):
                 legal_actions.append((blank_spots[0][0], blank_spots[0][1], i))
+
         return legal_actions
 
     def find_mandatory_place(self, board, blank_spots):

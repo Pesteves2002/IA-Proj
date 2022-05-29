@@ -170,10 +170,8 @@ class Board:
                     blank_spots.append((row, col))
         return blank_spots
 
-    def decrease_spots_left(self, row: int, col: int, value: int):
-        """Processa tudo sobre introduzir um número ao tabuleiro."""
-        self.spots_left -= 1
-        # update disparity values
+    def update_disparity_values(self, row: int, col: int, value: int):
+        """Atualiza os valores de disparidade na linha e coluna e reduz o número de espaços brancos na linha e coluna"""
         if (value == 0):
             self.disparity_row[row]["number_0"] += 1
             self.disparity_col[col]["number_0"] += 1
@@ -184,41 +182,51 @@ class Board:
         self.disparity_row[row]["blank_spots"] -= 1
         self.disparity_col[col]["blank_spots"] -= 1
 
+    def check_completed_row_or_col(self, coord: int, row_or_col: str):
+        """Verifica se a linha ou coluna se encontra duplicada no tabuleiro"""
+        if (row_or_col == "row"):
+            line = self.board[coord]
+            binary_values = self.row_binary
+            disparity_line = self.disparity_row[coord]
+        else:
+            transposed_board = transpose(self.board)
+            line = transposed_board[coord]
+            binary_values = self.col_binary
+            disparity_line = self.disparity_col[coord]
+
+        # Transforma-se o número binário em decimal, verificamos na lista se há igual
+        sum = 0
+        i = self.size - 1
+        for value in line:
+            sum += value * (2 ** i)
+            i -= 1
+        if sum not in binary_values:
+            binary_values.append(sum)
+        else:
+            self.valid = False
+
+        # Verifica-se se existe o mesmo número de 0's e de 1's
+        if self.size % 2 == 0:
+            if (disparity_line["number_0"] != disparity_line["number_1"]):
+                self.valid = False
+        # Verifica-se se a diferença entre número de 0's e de 1's é igual a 1
+        else:
+            if (abs(disparity_line["number_0"] - disparity_line["number_1"]) != 1):
+                self.valid = False
+
+    def decrease_spots_left(self, row: int, col: int, value: int):
+        """Processa tudo sobre introduzir um número ao tabuleiro."""
+        self.spots_left -= 1
+
+        self.update_disparity_values(row, col, value)
+
+        # Se linha já não tiver espaços vazios, verifica se já não há uma linha igual
         if (self.disparity_row[row]["blank_spots"] == 0):
-            sum = 0
-            i = self.size - 1
-            for value in self.board[row]:
-                sum += value * (2 ** i)
-                i -= 1
-            if sum not in self.row_binary:
-                self.row_binary.append(sum)
-            else:
-                self.valid = False
+            self.check_completed_row_or_col(row, "row")
 
-            if self.size % 2 == 0:
-                if (self.disparity_row[row]["number_0"] != self.disparity_row[row]["number_1"]):
-                    self.valid = False
-            else:
-                if (abs(self.disparity_row[row]["number_0"] - self.disparity_row[row]["number_1"]) != 1):
-                    self.valid = False
-
+        # Se coluna já não tiver espaços vazios, verifica se já não há uma coluna igual
         if (self.disparity_col[col]["blank_spots"] == 0):
-            sum = 0
-            i = self.size - 1
-            board_transpose = transpose(self.board)
-            for value in board_transpose[col]:
-                sum += value * (2 ** i)
-                i -= 1
-            if sum not in self.col_binary:
-                self.col_binary.append(sum)
-            else:
-                self.valid = False
-            if self.size % 2 == 0:
-                if (self.disparity_col[col]["number_0"] != self.disparity_col[col]["number_1"]):
-                    self.valid = False
-            else:
-                if (abs(self.disparity_col[col]["number_0"] - self.disparity_col[col]["number_1"]) != 1):
-                    self.valid = False
+            self.check_completed_row_or_col(col, "col")
 
 
 class Takuzu(Problem):

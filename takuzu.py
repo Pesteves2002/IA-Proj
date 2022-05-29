@@ -225,7 +225,6 @@ class Takuzu(Problem):
     def __init__(self, board: Board):
         """O construtor especifica o estado inicial."""
         self.initial = TakuzuState(board)
-        pass
 
     def actions(self, state: TakuzuState):
         """Retorna uma lista de ações que podem ser executadas a
@@ -242,7 +241,6 @@ class Takuzu(Problem):
                 legal_actions.append(
                     (blank_spots[0][0], blank_spots[0][1], i))
         return legal_actions
-        pass
 
     def find_mandatory_place(self, board, blank_spots):
         for blank_spot in blank_spots:
@@ -373,7 +371,6 @@ class Takuzu(Problem):
         'state' passado como argumento. A ação a executar deve ser uma
         das presentes na lista obtida pela execução de
         self.actions(state)."""
-        # TODO
 
         new_board = Board()
         new_board.size = state.board.size
@@ -398,15 +395,12 @@ class Takuzu(Problem):
         new_board.decrease_spots_left(action[0], action[1], action[2])
         new_state = TakuzuState(new_board)
         return new_state
-        pass
 
     def goal_test(self, state: TakuzuState):
         """Retorna True se e só se o estado passado como argumento é
         um estado objetivo. Deve verificar se todas as posições do tabuleiro
         estão preenchidas com uma sequência de números adjacentes."""
-        # TODO
         return state.board.get_spots_left() == 0 and state.board.valid
-        pass
 
     def h(self, node: Node):
         """Função heuristica utilizada para a procura A*."""
@@ -417,7 +411,6 @@ class Takuzu(Problem):
 
 
 if __name__ == "__main__":
-    # TODO:
     # Ler o ficheiro do standard input,
     # Usar uma técnica de procura para resolver a instância,
     # Retirar a solução a partir do nó resultante,

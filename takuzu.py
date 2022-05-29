@@ -238,10 +238,9 @@ class Takuzu(Problem):
         legal_actions = self.find_mandatory_place(state.board, blank_spots)
 
         if legal_actions == []:
-            for blank_spot in blank_spots:
-                for i in range(2):
-                    legal_actions.append((blank_spot[0], blank_spot[1], i))
-
+            for i in range(2):
+                legal_actions.append(
+                    (blank_spots[0][0], blank_spots[0][1], i))
         return legal_actions
         pass
 

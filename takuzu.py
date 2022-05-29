@@ -23,7 +23,7 @@ from search import (
 
 
 def complementary_value(value):
-    if (value == 0):
+    if value == 0:
         return 1
     return 0
 
@@ -58,23 +58,23 @@ class Board:
 
     def get_number(self, row: int, col: int) -> int:
         """Devolve o valor na respetiva posição do tabuleiro."""
-        if (row >= self.size or col >= self.size or row < 0 or col < 0):
+        if row >= self.size or col >= self.size or row < 0 or col < 0:
             return 2
         return self.board[row][col]
 
     def adjacent_vertical_numbers(self, row: int, col: int) -> (int, int):
         """Devolve os valores imediatamente abaixo e acima,
         respectivamente."""
-        if (row <= 0):
+        if row <= 0:
             upper = None
-            lower = self.board[row+1][col]
+            lower = self.board[row + 1][col]
         else:
-            if(row + 1 >= self.size):
+            if row + 1 >= self.size:
                 upper = self.board[row - 1][col]
                 lower = None
             else:
                 upper = self.board[row - 1][col]
-                lower = self.board[row+1][col]
+                lower = self.board[row + 1][col]
 
         return (lower, upper)
 
@@ -82,11 +82,11 @@ class Board:
         """Devolve os valores imediatamente à esquerda e à direita,
         respectivamente."""
 
-        if (col <= 0):
+        if col <= 0:
             left = None
-            right = self.board[row][col+1]
+            right = self.board[row][col + 1]
         else:
-            if(col + 1 >= self.size):
+            if col + 1 >= self.size:
                 left = self.board[row][col - 1]
                 right = None
             else:
@@ -119,11 +119,11 @@ class Board:
         for row in this_board.board:
             row_disparity = {"number_0": 0, "number_1": 0, "blank_spots": 0}
             for cell in row:
-                if (cell == 0):
+                if cell == 0:
                     row_disparity["number_0"] += 1
-                if (cell == 1):
+                if cell == 1:
                     row_disparity["number_1"] += 1
-                if (cell == 2):
+                if cell == 2:
                     this_board.spots_left += 1
                     row_disparity["blank_spots"] += 1
             this_board.disparity_row.append(row_disparity)
@@ -134,11 +134,11 @@ class Board:
         for col in board_transposed:
             col_disparity = {"number_0": 0, "number_1": 0, "blank_spots": 0}
             for cell in col:
-                if (cell == 0):
+                if cell == 0:
                     col_disparity["number_0"] += 1
-                if (cell == 1):
+                if cell == 1:
                     col_disparity["number_1"] += 1
-                if (cell == 2):
+                if cell == 2:
                     col_disparity["blank_spots"] += 1
             this_board.disparity_col.append(col_disparity)
 
@@ -166,13 +166,13 @@ class Board:
         blank_spots = []
         for row in range(self.size):
             for col in range(self.size):
-                if (self.get_number(row, col) == 2):
+                if self.get_number(row, col) == 2:
                     blank_spots.append((row, col))
         return blank_spots
 
     def update_disparity_values(self, row: int, col: int, value: int):
         """Atualiza os valores de disparidade na linha e coluna e reduz o número de espaços brancos na linha e coluna"""
-        if (value == 0):
+        if value == 0:
             self.disparity_row[row]["number_0"] += 1
             self.disparity_col[col]["number_0"] += 1
         else:
@@ -184,7 +184,7 @@ class Board:
 
     def check_completed_row_or_col(self, coord: int, row_or_col: str):
         """Verifica se a linha ou coluna se encontra duplicada no tabuleiro"""
-        if (row_or_col == "row"):
+        if row_or_col == "row":
             line = self.board[coord]
             binary_values = self.row_binary
             disparity_line = self.disparity_row[coord]
@@ -198,7 +198,7 @@ class Board:
         sum = 0
         i = self.size - 1
         for value in line:
-            sum += value * (2 ** i)
+            sum += value * (2**i)
             i -= 1
         if sum not in binary_values:
             binary_values.append(sum)
@@ -207,11 +207,11 @@ class Board:
 
         # Verifica-se se existe o mesmo número de 0's e de 1's
         if self.size % 2 == 0:
-            if (disparity_line["number_0"] != disparity_line["number_1"]):
+            if disparity_line["number_0"] != disparity_line["number_1"]:
                 self.valid = False
         # Verifica-se se a diferença entre número de 0's e de 1's é igual a 1
         else:
-            if (abs(disparity_line["number_0"] - disparity_line["number_1"]) != 1):
+            if abs(disparity_line["number_0"] - disparity_line["number_1"]) != 1:
                 self.valid = False
 
     def decrease_spots_left(self, row: int, col: int, value: int):
@@ -221,11 +221,11 @@ class Board:
         self.update_disparity_values(row, col, value)
 
         # Se linha já não tiver espaços vazios, verifica se já não há uma linha igual
-        if (self.disparity_row[row]["blank_spots"] == 0):
+        if self.disparity_row[row]["blank_spots"] == 0:
             self.check_completed_row_or_col(row, "row")
 
         # Se coluna já não tiver espaços vazios, verifica se já não há uma coluna igual
-        if (self.disparity_col[col]["blank_spots"] == 0):
+        if self.disparity_col[col]["blank_spots"] == 0:
             self.check_completed_row_or_col(col, "col")
 
 
@@ -246,8 +246,7 @@ class Takuzu(Problem):
 
         if legal_actions == []:
             for i in range(2):
-                legal_actions.append(
-                    (blank_spots[0][0], blank_spots[0][1], i))
+                legal_actions.append((blank_spots[0][0], blank_spots[0][1], i))
         return legal_actions
 
     def find_mandatory_place(self, board, blank_spots):
@@ -256,63 +255,131 @@ class Takuzu(Problem):
             col_value = blank_spot[1]
 
             # In case all values of the other number are already filled we can just put the complementary
-            if (board.size % 2 == 0):
-                if (board.disparity_row[row_value]["number_0"] == board.size/2):
-                    if (self.check_3_inline(board, [(row_value, col_value, 1)]) == []):
+            if board.size % 2 == 0:
+                if board.disparity_row[row_value]["number_0"] == board.size / 2:
+                    if self.check_3_inline(board, [(row_value, col_value, 1)]) == []:
                         board.valid = False
-                    return[(row_value, col_value, 1)]
-                if (board.disparity_row[row_value]["number_1"] == board.size/2):
-                    if (self.check_3_inline(board, [(row_value, col_value, 0)]) == []):
+                    return [(row_value, col_value, 1)]
+                if board.disparity_row[row_value]["number_1"] == board.size / 2:
+                    if self.check_3_inline(board, [(row_value, col_value, 0)]) == []:
                         board.valid = False
-                    return[(row_value, col_value, 0)]
-                if (board.disparity_col[col_value]["number_0"] == board.size/2):
-                    if (self.check_3_inline(board, [(row_value, col_value, 1)]) == []):
+                    return [(row_value, col_value, 0)]
+                if board.disparity_col[col_value]["number_0"] == board.size / 2:
+                    if self.check_3_inline(board, [(row_value, col_value, 1)]) == []:
                         board.valid = False
-                    return[(row_value, col_value, 1)]
-                if (board.disparity_col[col_value]["number_1"] == board.size/2):
-                    if (self.check_3_inline(board, [(row_value, col_value, 0)]) == []):
+                    return [(row_value, col_value, 1)]
+                if board.disparity_col[col_value]["number_1"] == board.size / 2:
+                    if self.check_3_inline(board, [(row_value, col_value, 0)]) == []:
                         board.valid = False
-                    return[(row_value, col_value, 0)]
+                    return [(row_value, col_value, 0)]
             else:
-                if (board.disparity_row[row_value]["number_0"] == (int(floor(board.size/2)) + 1)):
-                    if (self.check_3_inline(board, [(row_value, col_value, 1)]) == []):
+                if board.disparity_row[row_value]["number_0"] == (
+                    int(floor(board.size / 2)) + 1
+                ):
+                    if self.check_3_inline(board, [(row_value, col_value, 1)]) == []:
                         board.valid = False
-                    return[(row_value, col_value, 1)]
-                if (board.disparity_row[row_value]["number_1"] == (int(floor(board.size/2)) + 1)):
-                    if (self.check_3_inline(board, [(row_value, col_value, 0)]) == []):
+                    return [(row_value, col_value, 1)]
+                if board.disparity_row[row_value]["number_1"] == (
+                    int(floor(board.size / 2)) + 1
+                ):
+                    if self.check_3_inline(board, [(row_value, col_value, 0)]) == []:
                         board.valid = False
-                    return[(row_value, col_value, 0)]
-                if (board.disparity_col[col_value]["number_0"] == (int(floor(board.size/2)) + 1)):
-                    if (self.check_3_inline(board, [(row_value, col_value, 1)]) == []):
+                    return [(row_value, col_value, 0)]
+                if board.disparity_col[col_value]["number_0"] == (
+                    int(floor(board.size / 2)) + 1
+                ):
+                    if self.check_3_inline(board, [(row_value, col_value, 1)]) == []:
                         board.valid = False
-                    return[(row_value, col_value, 1)]
-                if (board.disparity_col[col_value]["number_1"] == (int(floor(board.size/2)) + 1)):
-                    if (self.check_3_inline(board, [(row_value, col_value, 0)]) == []):
+                    return [(row_value, col_value, 1)]
+                if board.disparity_col[col_value]["number_1"] == (
+                    int(floor(board.size / 2)) + 1
+                ):
+                    if self.check_3_inline(board, [(row_value, col_value, 0)]) == []:
                         board.valid = False
-                    return[(row_value, col_value, 0)]
+                    return [(row_value, col_value, 0)]
             # left
-            if (board.get_number(row_value, col_value - 2) == board.get_number(row_value, col_value - 1) != 2):
-                return [(row_value, col_value, complementary_value(board.get_number(row_value, col_value - 1)))]
+            if (
+                board.get_number(row_value, col_value - 2)
+                == board.get_number(row_value, col_value - 1)
+                != 2
+            ):
+                return [
+                    (
+                        row_value,
+                        col_value,
+                        complementary_value(board.get_number(row_value, col_value - 1)),
+                    )
+                ]
             # right
-            if (board.get_number(row_value, col_value + 2) == board.get_number(row_value, col_value + 1) != 2):
-                return [(row_value, col_value, complementary_value(board.get_number(row_value, col_value + 1)))]
+            if (
+                board.get_number(row_value, col_value + 2)
+                == board.get_number(row_value, col_value + 1)
+                != 2
+            ):
+                return [
+                    (
+                        row_value,
+                        col_value,
+                        complementary_value(board.get_number(row_value, col_value + 1)),
+                    )
+                ]
 
             # middle horizontal
-            if (board.get_number(row_value, col_value + 1) == board.get_number(row_value, col_value - 1) != 2):
-                return [(row_value, col_value, complementary_value(board.get_number(row_value, col_value - 1)))]
+            if (
+                board.get_number(row_value, col_value + 1)
+                == board.get_number(row_value, col_value - 1)
+                != 2
+            ):
+                return [
+                    (
+                        row_value,
+                        col_value,
+                        complementary_value(board.get_number(row_value, col_value - 1)),
+                    )
+                ]
 
             # above
-            if (board.get_number(row_value - 2, col_value) == board.get_number(row_value - 1, col_value) != 2):
-                return [(row_value, col_value, complementary_value(board.get_number(row_value - 1, col_value)))]
+            if (
+                board.get_number(row_value - 2, col_value)
+                == board.get_number(row_value - 1, col_value)
+                != 2
+            ):
+                return [
+                    (
+                        row_value,
+                        col_value,
+                        complementary_value(board.get_number(row_value - 1, col_value)),
+                    )
+                ]
 
             # below
-            if (board.get_number(row_value + 2, col_value) == board.get_number(row_value + 1, col_value) != 2):
+            if (
+                board.get_number(row_value + 2, col_value)
+                == board.get_number(row_value + 1, col_value)
+                != 2
+            ):
 
-                return [(row_value, col_value, complementary_value(board.get_number(row_value + 1, col_value)))]
+                return [
+                    (
+                        row_value,
+                        col_value,
+                        complementary_value(board.get_number(row_value + 1, col_value)),
+                    )
+                ]
 
             # middle vertical
-            if (board.get_number(row_value + 1, col_value) == board.get_number(row_value - 1, col_value) != 2):
-                return [(row_value, col_value, complementary_value(board.get_number(row_value - 1, col_value)))]
+            if (
+                board.get_number(row_value + 1, col_value)
+                == board.get_number(row_value - 1, col_value)
+                != 2
+            ):
+                return [
+                    (
+                        row_value,
+                        col_value,
+                        complementary_value(board.get_number(row_value - 1, col_value)),
+                    )
+                ]
 
         return []
 
@@ -332,14 +399,18 @@ class Takuzu(Problem):
                 limit = 1
 
             value_row = abs(
-                board.disparity_row[row_value]["number_0"] - board.disparity_row[row_value]["number_1"])
+                board.disparity_row[row_value]["number_0"]
+                - board.disparity_row[row_value]["number_1"]
+            )
             value_col = abs(
-                board.disparity_col[col_value]["number_0"] - board.disparity_col[col_value]["number_1"])
+                board.disparity_col[col_value]["number_0"]
+                - board.disparity_col[col_value]["number_1"]
+            )
 
-            if(value_row - board.disparity_row[row_value]["blank_spots"] > limit):
+            if value_row - board.disparity_row[row_value]["blank_spots"] > limit:
                 continue
 
-            if(value_col - board.disparity_col[col_value]["blank_spots"] > limit):
+            if value_col - board.disparity_col[col_value]["blank_spots"] > limit:
                 continue
 
             new_legal_actions.append(action)
@@ -353,58 +424,100 @@ class Takuzu(Problem):
             col_value = legal_action[1]
             num_to_insert = legal_action[2]
             # left
-            if (board.get_number(row_value, col_value - 2) == num_to_insert == board.get_number(row_value, col_value - 1)):
+            if (
+                board.get_number(row_value, col_value - 2)
+                == num_to_insert
+                == board.get_number(row_value, col_value - 1)
+            ):
                 continue
             # right
-            if (board.get_number(row_value, col_value + 2) == num_to_insert == board.get_number(row_value, col_value + 1)):
+            if (
+                board.get_number(row_value, col_value + 2)
+                == num_to_insert
+                == board.get_number(row_value, col_value + 1)
+            ):
                 continue
             # middle horizontal
-            if (board.get_number(row_value, col_value + 1) == num_to_insert == board.get_number(row_value, col_value - 1)):
+            if (
+                board.get_number(row_value, col_value + 1)
+                == num_to_insert
+                == board.get_number(row_value, col_value - 1)
+            ):
                 continue
             # above
-            if (board.get_number(row_value - 2, col_value) == num_to_insert == board.get_number(row_value - 1, col_value)):
+            if (
+                board.get_number(row_value - 2, col_value)
+                == num_to_insert
+                == board.get_number(row_value - 1, col_value)
+            ):
                 continue
             # below
-            if (board.get_number(row_value + 2, col_value) == num_to_insert == board.get_number(row_value + 1, col_value)):
+            if (
+                board.get_number(row_value + 2, col_value)
+                == num_to_insert
+                == board.get_number(row_value + 1, col_value)
+            ):
                 continue
             # middle vertical
-            if (board.get_number(row_value + 1, col_value) == num_to_insert == board.get_number(row_value - 1, col_value)):
+            if (
+                board.get_number(row_value + 1, col_value)
+                == num_to_insert
+                == board.get_number(row_value - 1, col_value)
+            ):
                 continue
 
             new_legal_actions.append(legal_action)
         return new_legal_actions
 
-    def result(self, state: TakuzuState, action):
+    def create_new_board(self, old_board: Board, action) -> Board:
+        """Retorna um novo tabuleiro depois de efetuada a ação"""
+        new_board = Board()
+        new_board.size = old_board.size
+        new_board.spots_left = old_board.spots_left
+        new_board.valid = old_board.valid
+
+        # Copia o antigo tabuleiro
+        for row in old_board.board:
+            new_board.board.append(row[:])
+
+        # Copia a disparidade das linhas
+        for row in old_board.disparity_row:
+            new_board.disparity_row.append(dict(row))
+
+        # Copia a disparidade das colunas
+        for col in old_board.disparity_col:
+            new_board.disparity_col.append(dict(col))
+
+        # Copia os binários
+        new_board.row_binary = old_board.row_binary[:]
+        new_board.col_binary = old_board.col_binary[:]
+
+        # Copia as posições vazias
+        new_board.blank_spots = old_board.blank_spots[:]
+
+        # Faz a ação
+        new_board.board[action[0]][action[1]] = action[2]
+
+        # Remove o espaço vazio onde foi feita a ação
+        new_board.blank_spots.remove((action[0], action[1]))
+
+        # Processa o tabuleiro com a ação feita
+        new_board.decrease_spots_left(action[0], action[1], action[2])
+
+        return new_board
+
+    def result(self, state: TakuzuState, action) -> TakuzuState:
         """Retorna o estado resultante de executar a 'action' sobre
         'state' passado como argumento. A ação a executar deve ser uma
         das presentes na lista obtida pela execução de
         self.actions(state)."""
 
-        new_board = Board()
-        new_board.size = state.board.size
-        new_board.spots_left = state.board.spots_left
-        for row in state.board.board:
-            new_board.board.append(row[:])
-
-        for row in state.board.disparity_row:
-            new_board.disparity_row.append(dict(row))
-
-        for col in state.board.disparity_col:
-            new_board.disparity_col.append(dict(col))
-
-        new_board.board[action[0]][action[1]] = action[2]
-
-        new_board.row_binary = state.board.row_binary[:]
-        new_board.col_binary = state.board.col_binary[:]
-
-        new_board.blank_spots = state.board.blank_spots[:]
-        new_board.blank_spots.remove((action[0], action[1]))
-        new_board.valid = state.board.valid
-        new_board.decrease_spots_left(action[0], action[1], action[2])
+        new_board = self.create_new_board(state.board, action)
         new_state = TakuzuState(new_board)
+
         return new_state
 
-    def goal_test(self, state: TakuzuState):
+    def goal_test(self, state: TakuzuState) -> bool:
         """Retorna True se e só se o estado passado como argumento é
         um estado objetivo. Deve verificar se todas as posições do tabuleiro
         estão preenchidas com uma sequência de números adjacentes."""

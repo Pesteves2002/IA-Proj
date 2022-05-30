@@ -8,7 +8,7 @@
 
 import sys
 
-from numpy import size, transpose, floor
+from numpy import transpose, floor
 
 from search import (
     Problem,
@@ -436,11 +436,5 @@ if __name__ == "__main__":
     goal_node = depth_first_tree_search(problem)
 
     print(goal_node.state.board)
-    # print(goal_node.state.board.disparity_row)
-    # print(goal_node.state.board.disparity_col)
-    # print(goal_node.state.board.valid)
-    # print(goal_node.state.board.row_binary)
-    # print(goal_node.state.board.col_binary)
-
 
 pass

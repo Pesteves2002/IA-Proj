@@ -8,7 +8,7 @@
 
 import sys
 
-from numpy import transpose, floor
+from numpy import size, transpose, floor
 
 from search import (
     Problem,
@@ -255,53 +255,34 @@ class Takuzu(Problem):
         return legal_actions
 
     def find_mandatory_place(self, board, blank_spots):
+        """Retorna uma ação no caso de saber que é obrigatória ela ser feita"""
         for blank_spot in blank_spots:
             row_value = blank_spot[0]
             col_value = blank_spot[1]
 
-            # In case all values of the other number are already filled we can just put the complementary
+            # No caso de as casas de um número já estarem preenchidas
+            # podemos devolver a ação mas temos de verificar se o tabuleiro continua válido
             if board.size % 2 == 0:
-                if board.disparity_row[row_value]["number_0"] == board.size / 2:
-                    if self.check_3_inline(board, (row_value, col_value, 1)) == []:
-                        board.valid = False
-                    return [(row_value, col_value, 1)]
-                if board.disparity_row[row_value]["number_1"] == board.size / 2:
-                    if self.check_3_inline(board, (row_value, col_value, 0)) == []:
-                        board.valid = False
-                    return [(row_value, col_value, 0)]
-                if board.disparity_col[col_value]["number_0"] == board.size / 2:
-                    if self.check_3_inline(board, (row_value, col_value, 1)) == []:
-                        board.valid = False
-                    return [(row_value, col_value, 1)]
-                if board.disparity_col[col_value]["number_1"] == board.size / 2:
-                    if self.check_3_inline(board, (row_value, col_value, 0)) == []:
-                        board.valid = False
-                    return [(row_value, col_value, 0)]
+                size_divided = board.size / 2
             else:
-                if board.disparity_row[row_value]["number_0"] == (
-                    int(floor(board.size / 2)) + 1
-                ):
-                    if self.check_3_inline(board, (row_value, col_value, 1)) == []:
-                        board.valid = False
-                    return [(row_value, col_value, 1)]
-                if board.disparity_row[row_value]["number_1"] == (
-                    int(floor(board.size / 2)) + 1
-                ):
-                    if self.check_3_inline(board, (row_value, col_value, 0)) == []:
-                        board.valid = False
-                    return [(row_value, col_value, 0)]
-                if board.disparity_col[col_value]["number_0"] == (
-                    int(floor(board.size / 2)) + 1
-                ):
-                    if self.check_3_inline(board, (row_value, col_value, 1)) == []:
-                        board.valid = False
-                    return [(row_value, col_value, 1)]
-                if board.disparity_col[col_value]["number_1"] == (
-                    int(floor(board.size / 2)) + 1
-                ):
-                    if self.check_3_inline(board, (row_value, col_value, 0)) == []:
-                        board.valid = False
-                    return [(row_value, col_value, 0)]
+                size_divided = int(floor(board.size / 2)) + 1
+
+            if board.disparity_row[row_value]["number_0"] == size_divided:
+                if self.check_3_inline(board, (row_value, col_value, 1)) == []:
+                    board.valid = False
+                return [(row_value, col_value, 1)]
+            if board.disparity_row[row_value]["number_1"] == size_divided:
+                if self.check_3_inline(board, (row_value, col_value, 0)) == []:
+                    board.valid = False
+                return [(row_value, col_value, 0)]
+            if board.disparity_col[col_value]["number_0"] == size_divided:
+                if self.check_3_inline(board, (row_value, col_value, 1)) == []:
+                    board.valid = False
+                return [(row_value, col_value, 1)]
+            if board.disparity_col[col_value]["number_1"] == size_divided:
+                if self.check_3_inline(board, (row_value, col_value, 0)) == []:
+                    board.valid = False
+                return [(row_value, col_value, 0)]
 
             possible_action = self.check_only_possible_action(
                 board, (row_value, col_value)

@@ -19,6 +19,10 @@ from search import (
     depth_first_tree_search,
     greedy_search,
     recursive_best_first_search,
+    depth_first_graph_search,
+    iterative_deepening_search,
+    depth_limited_search,
+    compare_searchers,
 )
 
 
@@ -55,6 +59,7 @@ class Board:
         self.row_binary = []
         self.col_binary = []
         self.valid = True
+        self.num_actions = 0
 
     def get_number(self, row: int, col: int) -> int:
         """Devolve o valor na respetiva posição do tabuleiro."""
@@ -251,6 +256,8 @@ class Takuzu(Problem):
         if legal_actions == []:
             for i in range(2):
                 legal_actions.append((blank_spots[0][0], blank_spots[0][1], i))
+            print("here")
+        state.board.num_actions = len(legal_actions)
 
         return legal_actions
 
@@ -418,6 +425,7 @@ class Takuzu(Problem):
     def h(self, node: Node):
         """Função heuristica utilizada para a procura A*."""
         # TODO
+        return node.state.board.num_actions
         pass
 
     # TODO: outros metodos da classe
@@ -433,8 +441,23 @@ if __name__ == "__main__":
 
     problem = Takuzu(board)
 
-    goal_node = depth_first_tree_search(problem)
+    compare_searchers(
+        [problem],
+        "header",
+        searchers=[
+            breadth_first_tree_search,
+            breadth_first_graph_search,
+            depth_first_graph_search,
+            iterative_deepening_search,
+            depth_limited_search,
+            recursive_best_first_search,
+            greedy_search,
+            astar_search,
+        ],
+    )
 
-    print(goal_node.state.board)
+    # goal_node = depth_first_tree_search(problem)
+
+    # print(goal_node.state.board)
 
 pass

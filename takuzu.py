@@ -59,7 +59,7 @@ class Board:
         self.row_binary = []
         self.col_binary = []
         self.valid = True
-        self.num_actions = 0
+        self.num_actions = 1
 
     def get_number(self, row: int, col: int) -> int:
         """Devolve o valor na respetiva posição do tabuleiro."""
@@ -425,10 +425,10 @@ class Takuzu(Problem):
         """Função heuristica utilizada para a procura A*."""
         action = node.action
         if action != None:
-            distance = square(action[0] ** 2 + action[1] ** 2)
             # Retorna a casa mais longe, onde action está mais em baixo,
             # e com os spots left para dar prioridade a um jogo q ja esteja a acabar
-            return board.size - distance + board.size - action[0] + board.spots_left
+
+            return action[0] + node.state.board.spots_left
         return 0
 
 
@@ -445,7 +445,7 @@ if __name__ == "__main__":
     compare_searchers(
         [problem],
         "----",
-        searchers=[depth_first_graph_search, greedy_search, astar_search],
+        searchers=[greedy_search],
     )
 
     # goal_node = depth_first_tree_search(problem)

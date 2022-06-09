@@ -8,7 +8,7 @@
 
 import sys
 
-from numpy import transpose, floor
+from numpy import square, transpose, floor
 
 from search import (
     Problem,
@@ -256,7 +256,6 @@ class Takuzu(Problem):
         if legal_actions == []:
             for i in range(2):
                 legal_actions.append((blank_spots[0][0], blank_spots[0][1], i))
-            print("here")
         state.board.num_actions = len(legal_actions)
 
         return legal_actions
@@ -424,11 +423,13 @@ class Takuzu(Problem):
 
     def h(self, node: Node):
         """Função heuristica utilizada para a procura A*."""
-        # TODO
-        return node.state.board.num_actions
-        pass
-
-    # TODO: outros metodos da classe
+        action = node.action
+        if action != None:
+            distance = square(action[0] ** 2 + action[1] ** 2)
+            # Retorna a casa mais longe, onde action está mais em baixo,
+            # e com os spots left para dar prioridade a um jogo q ja esteja a acabar
+            return board.size - distance + board.size - action[0] + board.spots_left
+        return 0
 
 
 if __name__ == "__main__":
@@ -443,17 +444,8 @@ if __name__ == "__main__":
 
     compare_searchers(
         [problem],
-        "header",
-        searchers=[
-            breadth_first_tree_search,
-            breadth_first_graph_search,
-            depth_first_graph_search,
-            iterative_deepening_search,
-            depth_limited_search,
-            recursive_best_first_search,
-            greedy_search,
-            astar_search,
-        ],
+        "----",
+        searchers=[depth_first_graph_search, greedy_search, astar_search],
     )
 
     # goal_node = depth_first_tree_search(problem)

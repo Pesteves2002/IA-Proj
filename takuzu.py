@@ -432,7 +432,12 @@ class Takuzu(Problem):
             # Retorna a casa mais longe, onde action está mais em baixo,
             # e com os spots left para dar prioridade a um jogo q ja esteja a acabar
 
-            return node.state.board.spots_left + (node.state.board.size - 1 + action[0])
+            return (
+                node.state.board.spots_left
+                + (node.state.board.size - 1 - action[0])
+                * 1
+                / node.state.board.num_actions
+            )
         return 0
 
 
@@ -449,10 +454,7 @@ if __name__ == "__main__":
     compare_searchers(
         [problem],
         "----",
-        searchers=[
-            depth_first_tree_search,
-            greedy_search,
-        ],
+        searchers=[depth_first_graph_search, greedy_search, astar_search],
     )
 
     SEARCHES = ["BFS", "DFS", "GREEDY", "A*"]

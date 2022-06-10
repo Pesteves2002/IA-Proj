@@ -447,7 +447,7 @@ if __name__ == "__main__":
     compare_searchers(
         [problem],
         "----",
-        searchers=[depth_first_graph_search, greedy_search],
+        searchers=[depth_first_graph_search, greedy_search, astar_search],
     )
 
     # goal_node = depth_first_tree_search(problem)

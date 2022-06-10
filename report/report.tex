@@ -67,6 +67,35 @@
 
   \section{Análise Teórica}
 
+  Para comparar algoritmos vamos usar como critérios, o tempo de execução, o número de nós expandidos e o número de nós gerados.
+  Para saber o tempo de execução foi feita a média de pelo menos 5 testes para cada input, recorrendo ao programa \href{https://github.com/sharkdp/hyperfine}{\textit{hyperfine}}.
+  Para saber o número de nós expandidos e o número de nós gerados foi usado código encontrado em search.py.
+
+  // TODO add data
+
+  
+  Todas as procuras garantem completude, apesar de umas serem mais eficientes que outras, isto deve-se a no caso de haver solução podem sempre testar todos as combinações de tabuleiro possíveis e chegar ao objetivo.
+  Apesar de um puzzle de Takuzu poder ter mais do que 1 solução possível, todas as soluções encontram-se sempre todas ao mesmo nível que equivale ao número inicial de posições livres, sendo assim não é importante falar da otimilidade do algoritmo.
+  
+  A heurística usada consiste em relacionar o número de posições livres e a linha em que a ação está a ser feita.
+  Dado a maneira como foi desenvolvido o algoritmo, quando é necessário fazer uma escolha entre os dois valores, é escolhido a primeira
+  posição livre,
+  Como se vizualiza o tabuleiro da esquerda para a direita e de cima para baixo, uma escolha numa linha mais abaixo significa que o resto das posições livres se encontram mais concentradas, logo havendo maior probabilidade de o puzzle acabar mais rápido.
+  Assim temos que
+  $$
+  h(n) = {num\_de\_pos\_lives} - \frac{1}{num\_actions} * (size\_board - 1 - num_row_of_action)
+  $$
+
+  Temos que um tabuleiro com menos número de posições livres é superior a um que tenha mais.
+  Considera-se que numa posição livre onde podem ocorrer as 2 ações vai ser pior que numa onde apenas pode acontecer 1 ação.
+  Assim saber onde a ação foi feita tem menos importância quando apenas há 1 ação. 
+  
+  Esta heurística apenas melhora a perfomance do algoritmo, não melhorando a sua otimilidade. 
+
+  Temos ainda que $h*(n) = num\_pos_livres$, logo podemos conluir que esta heurística não é admissível.
+
+
+
   Seja $N$ o número de elementos da sequência 1 e $M$ o número de elementos da sequência 2.
 
   \subsection{Problema 1}

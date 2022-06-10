@@ -83,7 +83,7 @@
   Como se vizualiza o tabuleiro da esquerda para a direita e de cima para baixo, uma escolha numa linha mais abaixo significa que o resto das posições livres se encontram mais concentradas, logo havendo maior probabilidade de o puzzle acabar mais rápido.
   Assim temos que
   $$
-  h(n) = {num\_de\_pos\_lives} - \frac{1}{num\_actions} * (size\_board - 1 - num_row_of_action)
+  h(n) = {num\_de\_pos\_lives} + \frac{1}{num\_actions} * (size\_board - 1 - num_row_of_action)
   $$
 
   Temos que um tabuleiro com menos número de posições livres é superior a um que tenha mais.
@@ -92,83 +92,7 @@
   
   Esta heurística apenas melhora a perfomance do algoritmo, não melhorando a sua otimilidade. 
 
-  Temos ainda que $h*(n) = num\_pos_livres$, logo podemos conluir que esta heurística não é admissível.
+  Temos ainda que $h*(n) = num\_pos\_livres$, e como $(\frac{1}{num\_actions} * (size\_board - 1 - num\_row\_of\_action)) > 0$ podemos concluir que esta heurística não é admissível, e não consistente.
 
-
-
-  Seja $N$ o número de elementos da sequência 1 e $M$ o número de elementos da sequência 2.
-
-  \subsection{Problema 1}
-
-  \begin{itemize}
-    \setlength{\itemsep}{0pt}
-    \item Simples leitura do input, colocando cada elemento num vetor. Logo, $\Theta(N)$.
-    \item Criação de uma lista vazia de stacks é feito em tempo constante, logo $\Theta(1)$.
-    \item Cada elemento da sequência é visitado uma vez, logo $\Theta(N)$.
-    \begin{itemize}
-      \setlength{\itemsep}{0pt}
-      \item A lista de pilhas encontra-se ordenada pelo elemento no topo da pilha, pelo que se pode aplicar o algoritmo \textit{binary search} para determinar em que pilha inserir o elemento. Logo, $O(\log N)$.
-      \item Cada pilha encontra-se também ordenada, pelo que se pode determinar o índice do maior elemento menor que o elemento a inserir também pelo algoritmo \textit{binary search}. Determinar o elemento no topo da pilha é feito em tempo constante. Logo, $O(\log N)$.
-      \item Obter o elemento no topo da pilha é feito em tempo constante, logo a soma à quantidade é $\Theta(1)$.
-      \item Adicionar um elemento à pilha é feito também em tempo constante. Logo, $\Theta(1)$.
-      \item Finalmente, adicionar uma pilha à lista é também em tempo constante. Logo, $\Theta(1)$.
-    \end{itemize}
-    \item A obtenção das soluções após construir a lista de pilhas, assim como a aprensen-tação dos resultados, são feitas em tempo constante. Logo, $\Theta(1)$.
-  \end{itemize}
-
-  Assim, a complexidade global da solução do problema 1 é $O(N \log N)$.
-
-  No problema 1, tem-se complexidade espacial $\Theta(N)$, visto que cada elemento da sequência é adicionado à lista de pilhas uma e apenas uma só vez.
-
-  \subsection{Problema 2}
-
-  No problema 2, efetua-se um pré-processamento na leitura do input:
-    Para a sequência 1 coloca-se cada elemento num vetor e num hashset.
-    Para a sequência 2 apenas se coloca os elementos num vetor que se encontram no hashset da sequência 1, isto é, apenas os números em comum nas duas sequências.
-  No pior caso, a inserção e leitura do hashset tem complexidade $O(N)$.
-  No entanto, o caso médio é $O(1)$.
-  Logo, no pior caso tem-se $O(N^2 + NM)$, mas no caso médio tem-se $O(N + M)$.
-
-  \begin{itemize}
-    \setlength{\itemsep}{0pt}
-    \item Criação de um vetor de tamanho $M$ é feito em tempo linear, logo $\Theta(M)$.
-    \item Cada elemento de sequência 1 é visitado uma vez, logo $\Theta(N)$.
-    \begin{itemize}
-      \setlength{\itemsep}{0pt}
-      \item Cada elemento da sequência 2 é visitado no máximo uma vez (para cada elemento da sequência 1). Relembra-se que alguns elementos foram retirados no pré-processamento do \textit{input}. Logo, $O(M)$.
-      \begin{itemize}
-        \setlength{\itemsep}{0pt}
-        \item São efetuadas comparações entre o elemento da sequência 1 e sequência 2, atualizando no máximo um valor do vetor. Logo, $\Theta(1)$.
-      \end{itemize}
-    \end{itemize}
-  \end{itemize}
-
-  Assim, a complexidade global da solução do problema 2 é, no pior caso $O(N^2 + NM)$, mas no caso médio é $O(NM)$.
-
-  No problema 2, tem-se complexidade espacial $O(N + M)$, visto que se utilizou um hashset com tamanho máximo igual ao da primeira sequência no pré-processamento do input e um vetor auxiliar na resolução do problema com tamanho máximo inferior ao da sequência 2 (devido ao pré-processamento do \textit{input}).
-
-  \section{Avaliação Experimental dos Resultados}
-
-  O programa foi executado, pelo menos 5 vezes para cada sequência, para ambos os problemas, recorrendo ao programa \href{https://github.com/sharkdp/hyperfine}{\textit{hyperfine}}.
-
-  \begin{wrapfigure}{r}{0.4\textwidth}
-    \centering
-    \includegraphics[width=0.4\textwidth]{report_prob1.png}
-    \includegraphics[width=0.4\textwidth]{report_prob2.png}
-  \end{wrapfigure}
-
-  Para o problema 1, foram utilizadas sequências de tamanho entre 10 e 100 000 000 elementos, 100 para cada ordem de grandeza.
-  O gráfico apresentado à direita tem uma escala $N \log N$ no eixo dos $xx$.
-  Os dados revelam uma reta linear, comprovando que a complexidade temporal do problema é efetivamente $O(N\log N)$, tal como concluido na análise teórica.
-
-  Para o problema 2, por ser o pior caso e para simplificar a análise, tomou-se sempre $N = M$, ou seja, o mesmo número de elementos para ambas as sequências.
-  Foram sempre utilizados números comuns, visto que esse é o pior caso no problema 2.
-  Foram utilizadas sequências de tamanho entre 10 e 100 000 elementos, 100 para cada ordem de grandeza.
-  O gráfico apresentado à direta tem uma escala $NM$ no eixo dos $xx$.
-  Os dados revelam uma reta linear, comprovando que a complexidade temporal do problema é, num caso geral, $O(NM)$, tal como concluído na análise teórica.
-
-  \section{Bibliografia}
-
-  \printbibliography
 
 \end{document}

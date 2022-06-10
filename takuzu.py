@@ -6,6 +6,7 @@
 # 99202 Diogo Melita
 # 99341 Tomás Esteves
 
+from pprint import pprint
 import sys
 
 from numpy import square, transpose, floor
@@ -373,6 +374,7 @@ class Takuzu(Problem):
         new_board.size = old_board.size
         new_board.spots_left = old_board.spots_left
         new_board.valid = old_board.valid
+        new_board.num_actions = old_board.num_actions
 
         # Copia o antigo tabuleiro
         for row in old_board.board:
@@ -428,7 +430,7 @@ class Takuzu(Problem):
             # Retorna a casa mais longe, onde action está mais em baixo,
             # e com os spots left para dar prioridade a um jogo q ja esteja a acabar
 
-            return action[0] + node.state.board.spots_left
+            return node.state.board.spots_left + (node.state.board.size - 1 + action[0])
         return 0
 
 
@@ -445,7 +447,7 @@ if __name__ == "__main__":
     compare_searchers(
         [problem],
         "----",
-        searchers=[greedy_search],
+        searchers=[depth_first_graph_search, greedy_search],
     )
 
     # goal_node = depth_first_tree_search(problem)

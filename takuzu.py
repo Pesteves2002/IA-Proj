@@ -6,10 +6,9 @@
 # 99202 Diogo Melita
 # 99341 Tomás Esteves
 
-from pprint import pprint
 import sys
 
-from numpy import square, transpose, floor
+from numpy import transpose, floor
 
 from search import (
     Problem,

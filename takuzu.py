@@ -8,7 +8,10 @@
 
 import sys
 
+import time
+
 from numpy import transpose, floor
+from pyparsing import originalTextFor
 
 from search import (
     Problem,
@@ -446,10 +449,32 @@ if __name__ == "__main__":
     compare_searchers(
         [problem],
         "----",
-        searchers=[depth_first_graph_search, greedy_search, astar_search],
+        searchers=[
+            depth_first_tree_search,
+            greedy_search,
+        ],
     )
 
-    # goal_node = depth_first_tree_search(problem)
+    SEARCHES = ["BFS", "DFS", "GREEDY", "A*"]
+
+    for search in SEARCHES:
+        start = time.time()
+        if search == SEARCHES[0]:
+            # goal_node = breadth_first_tree_search(problem)
+            print("NULL")
+
+        if search == SEARCHES[1]:
+            goal_node = depth_first_tree_search(problem)
+
+        if search == SEARCHES[2]:
+            goal_node = greedy_search(problem)
+
+        if search == SEARCHES[3]:
+            # goal_node = astar_search(problem)
+            print("NULL")
+
+        end = time.time()
+        print(search, end - start)
 
     # print(goal_node.state.board)
 

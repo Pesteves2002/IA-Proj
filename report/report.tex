@@ -35,64 +35,61 @@
 \begin{document}
   \section{Descrição do Problema e Implementação}
 
-  Foi pedido para desenvolver um programa em Python que resolve o problema Takuzu utilizando técnicas de procura de IA.
-  Começou-se por implementar as regras do jogo:
+  Para o projeto de Inteligência Artifial foi pedido para desenvolver um programa em Python que resolvesse o problema Takuzu, utilizando técnicas de procura de IA.
+  Para tal, começou-se por implementar as regras do jogo:
 
   \begin{itemize}
     \setlength{\itemsep}{0pt}
-    \item Há um número igual de 1s e 0s em cada linha e coluna (ou mais um para grelhas de
+    \item Há um número igual de 0s e 1s em cada linha e coluna (ou mais um para grelhas de
     dimensão ímpar).
-    \item Não há mais do que dois números iguais adjacentes (horizontal ou verticalmente) um ao
-    outro.
+    \item Não há mais do que dois números iguais adjacentes, tanto horizontal como verticalmente.
     \item Todas as linhas são diferentes.
     \item Todas as colunas são diferentes.
   \end{itemize}
 
-  Depois de implementadas as regras rapidamente percebeu-se que o tempo de execução do programa aumentava exponencialmente com o tamanho do tabuleiro (posições livres).
+  Depois de implementadas as regras, rapidamente se percebeu que o tempo de execução do programa aumentava exponencialmente com o tamanho do tabuleiro (posições livres).
   Sendo o Takuzu conhecido também por Sudoku Binário inferiu-se que existem posições livres que podem ser ocupadas por uma peça dado um estado do tabuleiro. 
-  Alguns dos casos implementados foram:
+  Desta forma, foram implementados os seguintes casos:
   \begin{itemize}
     \setlength{\itemsep}{0pt}
-    \item Se houver 2 casas de seguida com o mesmo valor, as posições adjacentes em linha têm de ter obrigatoriamente ter o valor contrário a essas 2 casas.
-    \item Se num tabuleiro par(ímpar) uma linha/coluna tiver metade(metade + 1) dos valores preenchidos com um valor, sabemos obrigatoriamente que as outras casas vazias têm de ser do valor contrário. 
+    \item Se existirem 2 casas seguidas com o mesmo valor, as posições adjacentes em linha têm de ter obrigatoriamente o valor contrário a essas 2 casas.
+    \item Se num tabuleiro par (ímpar), uma linha/coluna tiver metade (metade + 1) das casas preenchidas com um valor, sabemos obrigatoriamente que as casas vazias têm de ter o valor contrário. 
   \end{itemize}
 
-  Mesmo com estas impelementações nem todos os tabuleiros se resolviam.
-  Para isso foi implementado um CSP onde primeiro tenta encontrar posições livres que apenas aceitam um valor.
-  No caso de não encontrar é atribuído um valor à primeira casa livre.
-  Se mais à frente no algoritmo, uma posição não tiver valores possíveis, volta-se para trás e escolhe-se o outro valor para a variável.
+  Contudo, mesmo com estas impelementações nem todos os tabuleiros se resolviam.
+  Para isso, foi implementado um CSP que, numa primeira instância, tenta encontrar posições que apenas aceitam um valor.
+  No caso de não encontrar, é atribuído um valor à primeira casa livre.
+  Se, numa fase posterior do algoritmo, uma posição não tiver valores possíveis volta-se para trás e escolhe-se o outro valor para a variável.
 
-  Isto permite assim resolver eficientemente tabuleiros de Takuzu com tamanhos grandes($>$ 30)
+  Tal permite resolver eficientemente tabuleiros de Takuzu com tamanhos grandes ($>$ 30)
   
 
   \section{Análise Teórica}
 
-  Para comparar algoritmos vamos usar como critérios, o tempo de execução, o número de nós expandidos e o número de nós gerados.
+  Para comparar algoritmos vamos usar como critérios o tempo de execução, o número de nós expandidos e o número de nós gerados.
   Para saber o tempo de execução foi feita a média de pelo menos 5 testes para cada input, recorrendo ao programa \href{https://github.com/sharkdp/hyperfine}{\textit{hyperfine}}.
-  Para saber o número de nós expandidos e o número de nós gerados foi usado código encontrado em search.py.
+  Para saber o número de nós expandidos e o número de nós gerados foi usado o código encontrado em search.py.
 
   // TODO add data
 
   
-  Todas as procuras garantem completude, apesar de umas serem mais eficientes que outras, isto deve-se a no caso de haver solução podem sempre testar todos as combinações de tabuleiro possíveis e chegar ao objetivo.
-  Apesar de um puzzle de Takuzu poder ter mais do que 1 solução possível, todas as soluções encontram-se sempre todas ao mesmo nível que equivale ao número inicial de posições livres, sendo assim não é importante falar da otimilidade do algoritmo.
+  Todas as procuras garantem completude apesar de umas serem mais eficientes que outras. Isto deve-se ao facto de, no caso de existir solução, as várias procuras poderem sempre testar todas as combinações de tabuleiro possíveis e chegar ao objetivo.
+  Apesar de um puzzle de Takuzu poder ter mais do que uma solução possível, todas as soluções encontram-se sempre ao mesmo nível, que equivale ao número inicial de posições livres. Sendo assim, não é importante falar da otimilidade do algoritmo.
   
-  A heurística usada consiste em relacionar o número de posições livres e a linha em que a ação está a ser feita.
-  Dado a maneira como foi desenvolvido o algoritmo, quando é necessário fazer uma escolha entre os dois valores, é escolhido a primeira
-  posição livre,
-  Como se vizualiza o tabuleiro da esquerda para a direita e de cima para baixo, uma escolha numa linha mais abaixo significa que o resto das posições livres se encontram mais concentradas, logo havendo maior probabilidade de o puzzle acabar mais rápido.
-  Assim temos que
-  $$
-  h(n) = {num\_de\_pos\_lives} + \frac{1}{num\_actions} * (size\_board - 1 - num_row_of_action)
-  $$
-
-  Temos que um tabuleiro com menos número de posições livres é superior a um que tenha mais.
-  Considera-se que numa posição livre onde podem ocorrer as 2 ações vai ser pior que numa onde apenas pode acontecer 1 ação.
-  Assim saber onde a ação foi feita tem menos importância quando apenas há 1 ação. 
+  A heurística utilizada consiste em relacionar o número de posições livres e a linha em que a ação está a ser feita. Considera-se posição livre todas as posições onde podemos tanto preencher com 0 como com 1.
   
-  Esta heurística apenas melhora a perfomance do algoritmo, não melhorando a sua otimilidade. 
+  Devido à maneira como foi desenvolvido, quando não existem jogadas obrigatórias, isto é quando já não existem casas onde só podemos atribuir um dos dois valores de acordo com as regras implementadas, o algortimo irá tentar jogar na primeira casa vazia.
+  Como o tabuleiro é visualizado da esquerda para a direita e de cima para baixo, uma jogada numa linha mais "abaixo" significa que o resto das posições livres se encontram mais concentradas, havendo maior probabilidade de o puzzle acabar mais rápido.
+  Assim, temos que a heurística, h(n), utilizada pode ser expressa da seguinte forma:
+  $$
+  h(n) = {num\_de\_pos\_livres} + \frac{1}{num\_actions} * (size\_board - 1 - num\_row\_of\_action)
+  $$
 
-  Temos ainda que $h*(n) = num\_pos\_livres$, e como $(\frac{1}{num\_actions} * (size\_board - 1 - num\_row\_of\_action)) > 0$ podemos concluir que esta heurística não é admissível, e não consistente.
+  Por fim, um tabuleiro com menor número de posições livres é superior a um outro tabuleiro que tenha mais posições livres, uma vez que existem mais restrições no primeiro e desta forma menos caminhos a percorrer, pelo que será mais rápido encontrar solução.
+  Considera-se que efetuar uma jogada numa posição livre, onde podem ocorrer as 2 ações (colocar 0 ou 1), vai ser pior para o algoritmo que jogar numa posição onde apenas pode acontecer uma ação.
+  Desta forma, saber onde a ação foi executada tem menos importância quando apenas há uma ação possível, ou seja nas posições não livres. 
+  
+  Esta heurística, h*(n), apenas melhora a perfomance do algoritmo, não melhorando a sua otimilidade.
 
-
+  Temos então que $h*(n) = num\_pos\_livres$, e como $(\frac{1}{num\_actions} * (size\_board - 1 - num\_row\_of\_action)) > 0$ podemos concluir que esta heurística, h*(n) não é admissível e é não consistente.
 \end{document}

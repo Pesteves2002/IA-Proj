@@ -136,6 +136,7 @@ class Board:
                     row_disparity["blank_spots"] += 1
             this_board.disparity_row.append(row_disparity)
         this_board.blank_spots = this_board.get_blank_spots()
+        print("BLANK SPOTS: " + str(len(this_board.blank_spots)))
 
         board_transposed = transpose(this_board.board)
 
@@ -454,7 +455,7 @@ if __name__ == "__main__":
     compare_searchers(
         [problem],
         "----",
-        searchers=[depth_first_graph_search, greedy_search, astar_search],
+        searchers=[breadth_first_tree_search, depth_first_graph_search, greedy_search, astar_search],
     )
 
     SEARCHES = ["BFS", "DFS", "GREEDY", "A*"]
@@ -462,8 +463,7 @@ if __name__ == "__main__":
     for search in SEARCHES:
         start = time.time()
         if search == SEARCHES[0]:
-            # goal_node = breadth_first_tree_search(problem)
-            print("NULL")
+            goal_node = breadth_first_tree_search(problem)
 
         if search == SEARCHES[1]:
             goal_node = depth_first_tree_search(problem)
@@ -472,8 +472,7 @@ if __name__ == "__main__":
             goal_node = greedy_search(problem)
 
         if search == SEARCHES[3]:
-            # goal_node = astar_search(problem)
-            print("NULL")
+            goal_node = astar_search(problem)
 
         end = time.time()
         print(search, end - start)

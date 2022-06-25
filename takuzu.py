@@ -11,7 +11,6 @@ import sys
 import time
 
 from numpy import transpose, floor
-from pyparsing import originalTextFor
 
 from search import (
     Problem,

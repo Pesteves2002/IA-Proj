@@ -35,7 +35,7 @@
 \begin{document}
   \section{Descrição do Problema e Implementação}
 
-  Para o projeto de Inteligência Artifial foi pedido para desenvolver um programa em Python que resolvesse o problema Takuzu, utilizando técnicas de procura de IA.
+  Para o projeto de Inteligência Artificial foi pedido para desenvolver um programa em Python que resolvesse o problema Takuzu, utilizando técnicas de procura de IA.
   Para tal, começou-se por implementar as regras do jogo:
 
   \begin{itemize}
@@ -61,7 +61,7 @@
   No caso de não encontrar, é atribuído um valor à primeira casa livre.
   Se, numa fase posterior do algoritmo, uma posição não tiver valores possíveis volta-se para trás e escolhe-se o outro valor para a variável.
 
-  Tal permite resolver eficientemente tabuleiros de Takuzu com tamanhos grandes ($>$ 30)
+  Tal permite resolver eficientemente tabuleiros de Takuzu com tamanhos grandes ($> 30$)
   
 
   \section{Análise Teórica}
@@ -75,21 +75,20 @@
   
   Todas as procuras garantem completude apesar de umas serem mais eficientes que outras. Isto deve-se ao facto de, no caso de existir solução, as várias procuras poderem sempre testar todas as combinações de tabuleiro possíveis e chegar ao objetivo.
   Apesar de um puzzle de Takuzu poder ter mais do que uma solução possível, todas as soluções encontram-se sempre ao mesmo nível, que equivale ao número inicial de posições livres. Sendo assim, não é importante falar da otimilidade do algoritmo.
+  Além de que para este projeto apenas consideram-se tabuleiros com 1 solução apenas.
+  A heurística utilizada consiste em contar o número total de domínios das posições livres do tabuleiro.
   
-  A heurística utilizada consiste em relacionar o número de posições livres e a linha em que a ação está a ser feita. Considera-se posição livre todas as posições onde podemos tanto preencher com 0 como com 1.
-  
-  Devido à maneira como foi desenvolvido, quando não existem jogadas obrigatórias, isto é quando já não existem casas onde só podemos atribuir um dos dois valores de acordo com as regras implementadas, o algortimo irá tentar jogar na primeira casa vazia.
-  Como o tabuleiro é visualizado da esquerda para a direita e de cima para baixo, uma jogada numa linha mais "abaixo" significa que o resto das posições livres se encontram mais concentradas, havendo maior probabilidade de o puzzle acabar mais rápido.
   Assim, temos que a heurística, h(n), utilizada pode ser expressa da seguinte forma:
   $$
-  h(n) = {num\_de\_pos\_livres} + \frac{1}{num\_actions} * (size\_board - 1 - num\_row\_of\_action)
+  h(n) = num\_total\_de\_domínios
   $$
 
-  Por fim, um tabuleiro com menor número de posições livres é superior a um outro tabuleiro que tenha mais posições livres, uma vez que existem mais restrições no primeiro e desta forma menos caminhos a percorrer, pelo que será mais rápido encontrar solução.
-  Considera-se que efetuar uma jogada numa posição livre, onde podem ocorrer as 2 ações (colocar 0 ou 1), vai ser pior para o algoritmo que jogar numa posição onde apenas pode acontecer uma ação.
-  Desta forma, saber onde a ação foi executada tem menos importância quando apenas há uma ação possível, ou seja nas posições não livres. 
+  Esta heurística analisa cada posição livre e vê o tamanho do seu domínio que apenas pode ser 1 ou 2.
+  Quanto menor o número total de domínios, mais perto está o Takuzu de estar acabado.
   
-  Esta heurística, h*(n), apenas melhora a perfomance do algoritmo, não melhorando a sua otimilidade.
+  Esta heurística, h(n), apenas melhora a perfomance do algoritmo, não melhorando a sua otimilidade.
 
-  Temos então que $h*(n) = num\_pos\_livres$, e como $(\frac{1}{num\_actions} * (size\_board - 1 - num\_row\_of\_action)) > 0$ podemos concluir que esta heurística, h*(n) não é admissível e é não consistente.
+  Podemos inferir que $h^*(n) = num\_pos\_livres$ dá o custo real do melhor caminho até a solução. Se houverem x posições livres, então apenas precisamos de fazer x ações.
+  Para testar a admissibilidade da heurística basta verificar um estado onde uma posição livre tenha tamanho do domínio com valor 2, tornando a expressão $h(n) <= h^*(n)$ falsa,
+  conluímos assim que a heurística h(n) não é admissível e consequentemente não é consistente.
 \end{document}

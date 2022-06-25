@@ -135,6 +135,12 @@ class Board:
                     row_disparity["blank_spots"] += 1
             this_board.disparity_row.append(row_disparity)
         this_board.blank_spots = this_board.get_blank_spots()
+        print(
+            "SIZE: "
+            + str(this_board.size)
+            + "\nSPOTS: "
+            + str(this_board.size * this_board.size)
+        )
         print("BLANK SPOTS: " + str(len(this_board.blank_spots)))
 
         board_transposed = transpose(this_board.board)

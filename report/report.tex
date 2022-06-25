@@ -76,15 +76,16 @@
   Todas as procuras garantem completude apesar de umas serem mais eficientes que outras. Isto deve-se ao facto de, no caso de existir solução, as várias procuras poderem sempre testar todas as combinações de tabuleiro possíveis e chegar ao objetivo.
   Apesar de um puzzle de Takuzu poder ter mais do que uma solução possível, todas as soluções encontram-se sempre ao mesmo nível, que equivale ao número inicial de posições livres. Sendo assim, não é importante falar da otimilidade do algoritmo.
   Além de que para este projeto apenas consideram-se tabuleiros com 1 solução apenas.
-  A heurística utilizada consiste em contar o número total de domínios das posições livres do tabuleiro.
+  A heurística utilizada consiste em contar o número total do tamanho dos domínios das posições livres do tabuleiro.
+  Esta heurística analisa cada posição livre e vê o tamanho do seu domínio que apenas pode ser 1 ou 2.
+  Quanto menor o número total de tamanhos dos domínios, mais perto está o Takuzu de estar acabado.
+  Quando cheamos à solução temos h(n) = 0.
   
   Assim, temos que a heurística, h(n), utilizada pode ser expressa da seguinte forma:
   $$
   h(n) = num\_total\_de\_domínios
   $$
 
-  Esta heurística analisa cada posição livre e vê o tamanho do seu domínio que apenas pode ser 1 ou 2.
-  Quanto menor o número total de domínios, mais perto está o Takuzu de estar acabado.
   
   Esta heurística, h(n), apenas melhora a perfomance do algoritmo, não melhorando a sua otimilidade.
 

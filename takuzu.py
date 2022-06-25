@@ -438,8 +438,6 @@ class Takuzu(Problem):
         for blank_spot in blank_spots:
             legal_actions = self.find_mandatory_place(board, [blank_spot])
             if legal_actions == []:
-                number_domains += 2
-            else:
                 number_domains += 1
         return number_domains
 

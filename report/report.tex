@@ -100,7 +100,7 @@
       BFS     & 130 & 154 & 0.00800 \\
       DFS     &  32 &  35 & 0.00250 \\
       Greedy  &  34 &  36 & 0.00374 \\
-      A*      &  34 &  36 & 0.00377 \\
+      A*      &  66 &  59 & 0.00605 \\
     \hline
     \end{tabular}
   \end{table}
@@ -115,7 +115,7 @@
       BFS    & 102 & 103  & 0.00545 \\
       DFS    &  77 &  79  & 0.00456 \\
       Greedy &  61 &  63  & 0.00358 \\
-      A*     &  61 &  63  & 0.00387 \\
+      A*     &  92 &  90  & 0.00511 \\
     \hline
     \end{tabular}
   \end{table}
@@ -130,36 +130,36 @@
       BFS    & 385 & 450 & 0.05130 \\
       DFS    & 189 & 196 & 0.02660 \\
       Greedy & 184 & 189 & 0.02550 \\
-      A*     & 184 & 189 & 0.02652 \\
+      A*     & 325 & 367 & 0.0486 \\
     \hline
     \end{tabular}
   \end{table}
 
-  Pela observação da Table 1, podemos concluir que não foram feitas escolhas, tal que os nós gerados e expandidos de todos os algoritmos são iguais e o tempo de execução são todos muito semelhantes, apesar das procuras informadas terem valores maiores por terem de calcular o valor da heuristíca.
-  Para o resto das Tables vemos que a procura Greedy destaca-se seguida da procura A*, da DFS e finalmente da BFS.
-  Isto deve-se à qualidade da heurística descrita mais abaixo no relatório.
-  No entanto vemos que a DFS por vezes tem melhor perfomance que as procuras informadas, isso apenas acontece para tabuleiros de dimensão reduzida. 
+  Pela observação da Table 1, podemos concluir que não foram feitas escolhas, tal que os nós gerados e expandidos de todos os algoritmos são iguais e o tempo de execução são todos muito semelhantes, apesar das procuras informadas terem valores maiores por terem de calcular o valor da heurística.
+  Para o resto das Tables vemos que a procura Greedy destaca-se seguida da DFS, da procura A* e finalmente da BFS.
+  Isto deve-se à qualidade da heurística descrita mais abaixo no relatório e à natureza dos algoritmos de explorarem a árvore de procura em profundidade.
+  No entanto vemos que a DFS por vezes tem melhor perfomance que a procura Greedy, isso apenas acontece para tabuleiros de dimensão reduzida. 
   Todas as procuras garantem completude apesar de umas serem mais eficientes que outras. Isto deve-se ao facto de, no caso de existir solução, as várias procuras poderem sempre testar todas as combinações de tabuleiro possíveis e chegar ao objetivo.
   Apesar de um puzzle de Takuzu poder ter mais do que uma solução possível, todas as soluções encontram-se sempre ao mesmo nível, que equivale ao número inicial de posições livres. Sendo assim, não é importante falar da otimilidade do algoritmo.
   Além de que para este projeto apenas consideram-se tabuleiros com 1 solução apenas.
   
   \section{Análise da Heurística}
 
-  A heurística utilizada consiste em contar o número total do tamanho dos domínios das posições livres do tabuleiro.
+  A heurística utilizada consiste em contar o número total do tamanho dos domínios menos 1 das posições livres do tabuleiro.
   Esta heurística analisa cada posição livre e vê o tamanho do seu domínio que apenas pode ser 1 ou 2.
   Quanto menor o número total de tamanhos dos domínios, mais perto está o Takuzu de estar acabado.
-  Quando cheamos à solução temos h(n) = 0.
+  Quando se chega à solução tem-se h(n) = 0.
   
-  Assim, temos que a heurística, h(n), utilizada pode ser expressa da seguinte forma:
+  Assim, a heurística h(n) utilizada pode ser expressa da seguinte forma:
   
   $$
-  h(n) = num\_total\_de\_domínios
+  h(n) = \sum_x {\text{num\_ações\_possíveis}(x) -1} , x \in D = \{\text{Domínio das Posições Livres}\}
   $$
 
   
   Esta heurística, h(n), apenas melhora a perfomance do algoritmo, não melhorando a sua otimilidade.
 
   Podemos inferir que $h^*(n) = num\_pos\_livres$ dá o custo real do melhor caminho até a solução. Se houverem x posições livres, então apenas precisamos de fazer x ações.
-  Para testar a admissibilidade da heurística basta verificar um estado onde uma posição livre tenha tamanho do domínio com valor 2, tornando a expressão $h(n) <= h^*(n)$ falsa,
-  conluímos assim que a heurística h(n) não é admissível e consequentemente não é consistente.
+  Para testar a admissibilidade da heurística basta verificar o maior valor de $h(n) = h^*(n)$, tornando a expressão $h(n) <= h^*(n)$ sempre verdadeira,
+  conluímos assim que a heurística h(n) é admissível, e é consistente porque.. .
 \end{document}

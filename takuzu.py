@@ -422,15 +422,22 @@ class Takuzu(Problem):
         estão preenchidas com uma sequência de números adjacentes."""
         return state.board.get_spots_left() == 0 and state.board.valid
 
+    def get_number_of_domains(self, board) -> int:
+        number_domains = 0
+        blank_spots = board.blank_spots
+        legal_actions = []
+        for blank_spot in blank_spots:
+            legal_actions = self.find_mandatory_place(board, [blank_spot])
+            if legal_actions == []:
+                number_domains += 2
+                print("OLALAAAAAAA")
+            else:
+                number_domains += 1
+        return number_domains
+
     def h(self, node: Node):
         """Função heuristica utilizada para a procura A*."""
-        action = node.action
-        if action != None:
-            # Retorna a casa mais longe, onde action está mais em baixo,
-            # e com os spots left para dar prioridade a um jogo q ja esteja a acabar
-
-            return node.state.board.spots_left + (node.state.board.size - 1 + action[0])
-        return 0
+        return self.get_number_of_domains(node.state.board)
 
 
 if __name__ == "__main__":
@@ -446,7 +453,7 @@ if __name__ == "__main__":
     compare_searchers(
         [problem],
         "----",
-        searchers=[depth_first_graph_search, greedy_search, astar_search],
+        searchers=[depth_first_graph_search, greedy_search],
     )
 
     # goal_node = depth_first_tree_search(problem)

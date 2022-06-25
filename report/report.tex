@@ -8,6 +8,11 @@
 \usepackage{blindtext}
 \usepackage{hyperref}
 \usepackage{biblatex}
+\usepackage{floatrow}
+\usepackage{caption}
+\floatsetup[table]{capposition=top}
+\captionsetup[table]{skip=0pt,singlelinecheck=off}
+
 
 \graphicspath{ {./} }
 \hypersetup{
@@ -70,8 +75,65 @@
   Para saber o tempo de execução foi feita a média de pelo menos 5 testes para cada input, recorrendo ao programa \href{https://github.com/sharkdp/hyperfine}{\textit{hyperfine}}.
   Para saber o número de nós expandidos e o número de nós gerados foi usado o código encontrado em search.py.
 
-  // TODO add data
+  \begin{table}[H]
+    \caption{N: 8 Espaços Livres: 42}
+    \label{tab:my-table}
+    \centering
+    \begin{tabular}{lccc}
+      & Nós Expandidos & Nós Gerados & Tempo (s) \\
+      \hline
+      BFS    & 315 & 329 & 0.01309 \\
+      DFS    &  54 &  58 & 0.00346 \\
+      Greedy &  49 &  53 & 0.00301 \\
+      A*     &  53 &  56 & 0.00361 \\
+    \hline
+    \end{tabular}
+  \end{table}
 
+  \begin{table}[H]
+    \caption{N: 9 Espaços Livres: 32}
+    \label{tab:my-table1}
+    \centering
+    \begin{tabular}{lccc}
+      & Nós Expandidos & Nós Gerados & Tempo (s) \\
+      \hline
+      BFS     & 130 & 154 & 0.00800 \\
+      DFS     &  32 &  35 & 0.00250 \\
+      Greedy  &  34 &  36 & 0.00374 \\
+      A*      &  34 &  36 & 0.00377 \\
+    \hline
+    \end{tabular}
+  \end{table}
+
+  \begin{table}[H]
+    \caption{N: 10 Espaços Livres: 55}
+    \label{tab:my-table2}
+    \centering
+    \begin{tabular}{lccc}
+      & Nós Expandidos & Nós Gerados & Tempo (s) \\
+      \hline
+      BFS    & 102 & 103  & 0.00545 \\
+      DFS    &  77 &  79  & 0.00456 \\
+      Greedy &  61 &  63  & 0.00358 \\
+      A*     &  61 &  63  & 0.00387 \\
+    \hline
+    \end{tabular}
+  \end{table}
+
+  \begin{table}[H]
+    \caption{N: 21 Espaços Livres: 180}
+    \label{tab:my-table3}
+    \centering
+    \begin{tabular}{lccc}
+      & Nós Expandidos & Nós Gerados & Tempo (s) \\
+      \hline
+      BFS    & 385 & 450 & 0.05130 \\
+      DFS    & 189 & 196 & 0.02660 \\
+      Greedy & 184 & 189 & 0.02550 \\
+      A*     & 184 & 189 & 0.02652 \\
+    \hline
+    \end{tabular}
+  \end{table}
   
   Todas as procuras garantem completude apesar de umas serem mais eficientes que outras. Isto deve-se ao facto de, no caso de existir solução, as várias procuras poderem sempre testar todas as combinações de tabuleiro possíveis e chegar ao objetivo.
   Apesar de um puzzle de Takuzu poder ter mais do que uma solução possível, todas as soluções encontram-se sempre ao mesmo nível, que equivale ao número inicial de posições livres. Sendo assim, não é importante falar da otimilidade do algoritmo.
@@ -82,6 +144,7 @@
   Quando cheamos à solução temos h(n) = 0.
   
   Assim, temos que a heurística, h(n), utilizada pode ser expressa da seguinte forma:
+  
   $$
   h(n) = num\_total\_de\_domínios
   $$

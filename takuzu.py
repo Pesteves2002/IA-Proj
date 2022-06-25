@@ -430,7 +430,6 @@ class Takuzu(Problem):
             legal_actions = self.find_mandatory_place(board, [blank_spot])
             if legal_actions == []:
                 number_domains += 2
-                print("OLALAAAAAAA")
             else:
                 number_domains += 1
         return number_domains
@@ -453,7 +452,7 @@ if __name__ == "__main__":
     compare_searchers(
         [problem],
         "----",
-        searchers=[depth_first_graph_search, greedy_search],
+        searchers=[depth_first_graph_search, greedy_search, astar_search],
     )
 
     # goal_node = depth_first_tree_search(problem)

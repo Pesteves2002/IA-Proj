@@ -1,0 +1,166 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[legalpaper, portrait, margin=3cm]{geometry}
+\usepackage{fancyhdr}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{blindtext}
+\usepackage{hyperref}
+\usepackage{biblatex}
+\usepackage{floatrow}
+\usepackage{caption}
+\floatsetup[table]{capposition=top}
+\captionsetup[table]{skip=0pt,singlelinecheck=off}
+
+
+\graphicspath{ {./} }
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  filecolor=magenta,
+  urlcolor=blue,
+  citecolor=blue,
+  pdftitle={Relatório IA - Projeto - 2021/2022},
+  pdfpagemode=FullScreen,
+}
+\addbibresource{./bibliography.bib}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Grupo \textbf{al002}}
+\lhead{Relatório Projeto IA 2021/2022 LEIC-A}
+\cfoot{Diogo Melita (99202) e Tomás Esteves (99341)}
+
+\renewcommand{\footrulewidth}{0.2pt}
+
+\renewcommand{\labelitemii}{$\circ$}
+\renewcommand{\labelitemiii}{$\diamond$}
+
+\begin{document}
+  \section{Descrição do Problema e Implementação}
+
+  Para o projeto de Inteligência Artificial foi pedido para desenvolver um programa em Python que resolvesse o problema Takuzu, utilizando técnicas de procura de IA.
+  Para tal, começou-se por implementar as regras do jogo:
+
+  \begin{itemize}
+    \setlength{\itemsep}{0pt}
+    \item Há um número igual de 0s e 1s em cada linha e coluna (ou mais um para grelhas de
+    dimensão ímpar).
+    \item Não há mais do que dois números iguais adjacentes, tanto horizontal como verticalmente.
+    \item Todas as linhas são diferentes.
+    \item Todas as colunas são diferentes.
+  \end{itemize}
+
+  Depois de implementadas as regras, rapidamente se percebeu que o tempo de execução do programa aumentava exponencialmente com o tamanho do tabuleiro (posições livres).
+  Sendo o Takuzu conhecido também por Sudoku Binário inferiu-se que existem posições livres que podem ser ocupadas por apenas um valor dado um estado do tabuleiro. 
+  Desta forma, foram implementados os seguintes casos:
+  \begin{itemize}
+    \setlength{\itemsep}{0pt}
+    \item Se existirem duas casas seguidas com o mesmo valor, as posições adjacentes em linha têm de ter obrigatoriamente o valor contrário a essas duas casas.
+    \item Se num tabuleiro par (ímpar), uma linha/coluna tiver metade (metade + 1) das casas preenchidas com um valor, sabemos obrigatoriamente que as casas vazias têm de ter o valor contrário. 
+  \end{itemize}
+
+  Contudo, mesmo com estas implementações nem todos os tabuleiros se resolviam.
+  Para isso, foi implementado um CSP que, numa primeira instância, tenta encontrar posições livres que apenas aceitam um valor.
+  No caso de não encontrar, é atribuído um valor à primeira casa livre.
+  Se, numa fase posterior do algoritmo, uma posição não tiver valores possíveis volta-se para trás e escolhe-se o outro valor para a variável.
+
+  Tal permite resolver eficientemente tabuleiros de Takuzu com tamanhos grandes ($> 30$) e com tamanho elevado de posições livres ($>180$).
+  
+
+  \section{Análise Teórica}
+
+  Para comparar algoritmos usou-se como critérios o tempo de execução, o número de nós expandidos e o número de nós gerados.
+  Para saber o tempo de execução foi feita a média de pelo menos 5 testes para cada input, recorrendo ao programa \href{https://github.com/sharkdp/hyperfine}{\textit{hyperfine}}.
+  Para saber o número de nós expandidos e o número de nós gerados foi usado o código encontrado em search.py.
+
+  \begin{table}[H]
+    \caption{N: 6, Espaços Livres: 7}
+    \label{tab:my-table}
+    \centering
+    \begin{tabular}{lccc}
+      & Nós Expandidos & Nós Gerados & Tempo (s) \\
+      \hline
+      BFS    &  7 &  7 & 0.00015 \\
+      DFS    &  7 &  7 & 0.00015 \\
+      Greedy &  7 &  7 & 0.00026 \\
+      A*     &  7 &  7 & 0.00025 \\
+    \hline
+    \end{tabular}
+  \end{table}
+
+  \begin{table}[H]
+    \caption{N: 9, Espaços Livres: 32}
+    \label{tab:my-table1}
+    \centering
+    \begin{tabular}{lccc}
+      & Nós Expandidos & Nós Gerados & Tempo (s) \\
+      \hline
+      BFS     & 130 & 154 & 0.00800 \\
+      DFS     &  32 &  35 & 0.00250 \\
+      Greedy  &  34 &  36 & 0.00374 \\
+      A*      &  66 &  59 & 0.00605 \\
+    \hline
+    \end{tabular}
+  \end{table}
+
+  \begin{table}[H]
+    \caption{N: 10, Espaços Livres: 55}
+    \label{tab:my-table2}
+    \centering
+    \begin{tabular}{lccc}
+      & Nós Expandidos & Nós Gerados & Tempo (s) \\
+      \hline
+      BFS    & 102 & 103  & 0.00545 \\
+      DFS    &  77 &  79  & 0.00456 \\
+      Greedy &  61 &  63  & 0.00358 \\
+      A*     &  92 &  90  & 0.00511 \\
+    \hline
+    \end{tabular}
+  \end{table}
+
+  \begin{table}[H]
+    \caption{N: 21, Espaços Livres: 180}
+    \label{tab:my-table3}
+    \centering
+    \begin{tabular}{lccc}
+      & Nós Expandidos & Nós Gerados & Tempo (s) \\
+      \hline
+      BFS    & 385 & 450 & 0.05130 \\
+      DFS    & 189 & 196 & 0.02660 \\
+      Greedy & 184 & 189 & 0.02550 \\
+      A*     & 325 & 367 & 0.04867 \\
+    \hline
+    \end{tabular}
+  \end{table}
+
+  Pela observação da Table 1, pode-se concluir que não foram feitas escolhas, tal que os nós gerados e expandidos de todos os algoritmos são iguais e os tempos de execução são todos muito semelhantes, apesar das procuras informadas terem valores maiores por terem de calcular o valor da heurística.
+  Para o resto das Tables observa-se que a procura Greedy se destaca seguida da DFS, da procura A* e finalmente da BFS.
+  Isto deve-se à qualidade da heurística descrita mais abaixo no relatório e à natureza dos algoritmos de como exploram a árvore de procura.
+  No entanto repara-se que a DFS por vezes tem melhor perfomance que a procura Greedy, embora apenas para tabuleiros de dimensão reduzida. 
+  
+  Todas as procuras garantem completude apesar de umas serem mais eficientes que outras. Isto deve-se ao facto de, no caso de existir solução, as várias procuras poderem sempre testar todas as combinações de tabuleiro possíveis e chegar ao objetivo.
+  Apesar de um puzzle de Takuzu poder ter mais do que uma solução possível, todas as soluções encontram-se sempre ao mesmo nível, que equivale ao número inicial de posições livres. Sendo assim, não é importante falar da otimilidade do algoritmo, 
+  além de que para este projeto apenas se consideram tabuleiros com uma solução apenas.
+  
+  \section{Análise da Heurística}
+
+  A heurística utilizada consiste em contar o número total do tamanho dos domínios das posições livres do tabuleiro e subtrair o número de posições livres.
+  Esta heurística analisa cada posição livre e vê o tamanho do seu domínio que apenas pode ser 1 ou 2.
+  Quanto menor o valor da heurística, mais perto está o Takuzu de estar acabado.
+  Quando se chega à solução tem-se h(n) = 0.
+  
+  Assim, a heurística h(n) utilizada pode ser expressa da seguinte forma:
+  
+  $$
+  h(n) = \sum_x {(\text{num\_ações\_possíveis}(x) -1)} , x \in D = \{\text{Domínio das Posições Livres}\}
+  $$
+
+  
+  Esta heurística, h(n), apenas melhora a perfomance do algoritmo, não melhorando a sua otimilidade pois as soluções estão todas ao mesmo nível.
+
+  Podemos inferir que $h^*(n) = \text{num\_pos\_livres}$ dá o custo real do melhor caminho até a solução. Se houver x posições livres, então apenas precisa-se de fazer x ações.
+  Para testar a admissibilidade da heurística basta verificar que o maior valor de $h(n) = h^*(n)$ no caso de se saber os valores de cada posição livre, tornando a expressão $h(n) <= h^*(n)$ sempre verdadeira,
+  concluindo-se assim que a heurística h(n) é admissível, e é consistente porque para chegar ao mesmo objetivo, diferentes caminhos terão o mesmo custo (que é mínimo).
+\end{document}

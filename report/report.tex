@@ -40,7 +40,7 @@
 \begin{document}
   \section{Descrição do Problema e Implementação}
 
-  Para o projeto de Inteligência Artificial foi pedido para desenvolver um programa em Python que resolvesse o problema Takuzu, utilizando técnicas de procura de IA.
+  Para o projeto de Inteligência Artificial foi-nos pedido para desenvolver um programa em Python que resolvesse o problema Takuzu, utilizando técnicas de procura de IA.
   Para tal, começou-se por implementar as regras do jogo:
 
   \begin{itemize}
@@ -57,7 +57,7 @@
   Desta forma, foram implementados os seguintes casos:
   \begin{itemize}
     \setlength{\itemsep}{0pt}
-    \item Se existirem 2 casas seguidas com o mesmo valor, as posições adjacentes em linha têm de ter obrigatoriamente o valor contrário a essas 2 casas.
+    \item Se existirem duas casas seguidas com o mesmo valor, as posições adjacentes em linha têm de ter obrigatoriamente o valor contrário a essas duas casas.
     \item Se num tabuleiro par (ímpar), uma linha/coluna tiver metade (metade + 1) das casas preenchidas com um valor, sabemos obrigatoriamente que as casas vazias têm de ter o valor contrário. 
   \end{itemize}
 
@@ -135,14 +135,14 @@
     \end{tabular}
   \end{table}
 
-  Pela observação da Table 1, podemos concluir que não foram feitas escolhas, tal que os nós gerados e expandidos de todos os algoritmos são iguais e o tempo de execução são todos muito semelhantes, apesar das procuras informadas terem valores maiores por terem de calcular o valor da heurística.
-  Para o resto das Tables vemos que a procura Greedy destaca-se seguida da DFS, da procura A* e finalmente da BFS.
+  Pela observação da Table 1, podemos concluir que não foram feitas escolhas, tal que os nós gerados e expandidos de todos os algoritmos são iguais e os tempos de execução são todos muito semelhantes, apesar das procuras informadas terem valores maiores por terem de calcular o valor da heurística.
+  Para o resto das Tables vemos que a procura Greedy se destaca seguida da DFS, da procura A* e finalmente da BFS.
   Isto deve-se à qualidade da heurística descrita mais abaixo no relatório e à natureza dos algoritmos de como exploram a árvore de procura.
   No entanto vemos que a DFS por vezes tem melhor perfomance que a procura Greedy, embora apenas para tabuleiros de dimensão reduzida. 
   
   Todas as procuras garantem completude apesar de umas serem mais eficientes que outras. Isto deve-se ao facto de, no caso de existir solução, as várias procuras poderem sempre testar todas as combinações de tabuleiro possíveis e chegar ao objetivo.
-  Apesar de um puzzle de Takuzu poder ter mais do que uma solução possível, todas as soluções encontram-se sempre ao mesmo nível, que equivale ao número inicial de posições livres. Sendo assim, não é importante falar da otimilidade do algoritmo.
-  Além de que para este projeto apenas consideram-se tabuleiros com 1 solução apenas.
+  Apesar de um puzzle de Takuzu poder ter mais do que uma solução possível, todas as soluções encontram-se sempre ao mesmo nível, que equivale ao número inicial de posições livres. Sendo assim, não é importante falar da otimilidade do algoritmo, 
+  além de que para este projeto apenas se consideram tabuleiros com uma solução apenas.
   
   \section{Análise da Heurística}
 
@@ -160,7 +160,7 @@
   
   Esta heurística, h(n), apenas melhora a perfomance do algoritmo, não melhorando a sua otimilidade pois as soluções estão todas ao mesmo nível.
 
-  Podemos inferir que $h^*(n) = \text{num\_pos\_livres}$ dá o custo real do melhor caminho até a solução. Se houverem x posições livres, então apenas precisamos de fazer x ações.
+  Podemos inferir que $h^*(n) = \text{num\_pos\_livres}$ dá o custo real do melhor caminho até a solução. Se houver x posições livres, então apenas precisamos de fazer x ações.
   Para testar a admissibilidade da heurística basta verificar que o maior valor de $h(n) = h^*(n)$ no caso de se saber os valores de cada posição livre, tornando a expressão $h(n) <= h^*(n)$ sempre verdadeira,
   concluindo-se assim que a heurística h(n) é admissível, e é consistente porque para chegar ao mesmo objetivo, diferentes caminhos terão o mesmo custo (que é mínimo).
 \end{document}

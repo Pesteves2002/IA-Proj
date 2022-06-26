@@ -8,24 +8,9 @@
 
 import sys
 
-import time
-
 from numpy import transpose, floor
 
-from search import (
-    Problem,
-    Node,
-    astar_search,
-    breadth_first_graph_search,
-    breadth_first_tree_search,
-    depth_first_tree_search,
-    greedy_search,
-    recursive_best_first_search,
-    depth_first_graph_search,
-    iterative_deepening_search,
-    depth_limited_search,
-    compare_searchers,
-)
+from search import Problem, Node, depth_first_tree_search
 
 
 def complementary_value(value):
@@ -135,13 +120,6 @@ class Board:
                     row_disparity["blank_spots"] += 1
             this_board.disparity_row.append(row_disparity)
         this_board.blank_spots = this_board.get_blank_spots()
-        print(
-            "SIZE: "
-            + str(this_board.size)
-            + "\nSPOTS: "
-            + str(this_board.size * this_board.size)
-        )
-        print("BLANK SPOTS: " + str(len(this_board.blank_spots)))
 
         board_transposed = transpose(this_board.board)
 
@@ -438,6 +416,8 @@ class Takuzu(Problem):
         for blank_spot in blank_spots:
             legal_actions = self.find_mandatory_place(board, [blank_spot])
             if legal_actions == []:
+                number_domains += 2
+            else:
                 number_domains += 1
         return number_domains
 
@@ -456,36 +436,8 @@ if __name__ == "__main__":
 
     problem = Takuzu(board)
 
-    compare_searchers(
-        [problem],
-        "----",
-        searchers=[
-            breadth_first_tree_search,
-            depth_first_graph_search,
-            greedy_search,
-            astar_search,
-        ],
-    )
+    goal_node = depth_first_tree_search(problem)
 
-    SEARCHES = ["BFS", "DFS", "GREEDY", "A*"]
-
-    for search in SEARCHES:
-        start = time.time()
-        if search == SEARCHES[0]:
-            goal_node = breadth_first_tree_search(problem)
-
-        if search == SEARCHES[1]:
-            goal_node = depth_first_tree_search(problem)
-
-        if search == SEARCHES[2]:
-            goal_node = greedy_search(problem)
-
-        if search == SEARCHES[3]:
-            goal_node = astar_search(problem)
-
-        end = time.time()
-        print(search, end - start)
-
-    # print(goal_node.state.board)
+    print(goal_node.state.board)
 
 pass

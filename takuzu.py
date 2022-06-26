@@ -10,20 +10,7 @@ import sys
 
 from numpy import transpose, floor
 
-from search import (
-    Problem,
-    Node,
-    astar_search,
-    breadth_first_graph_search,
-    breadth_first_tree_search,
-    depth_first_tree_search,
-    greedy_search,
-    recursive_best_first_search,
-    depth_first_graph_search,
-    iterative_deepening_search,
-    depth_limited_search,
-    compare_searchers,
-)
+from search import Problem, Node, depth_first_tree_search
 
 
 def complementary_value(value):
@@ -449,14 +436,8 @@ if __name__ == "__main__":
 
     problem = Takuzu(board)
 
-    compare_searchers(
-        [problem],
-        "----",
-        searchers=[depth_first_graph_search, greedy_search, astar_search],
-    )
+    goal_node = depth_first_tree_search(problem)
 
-    # goal_node = depth_first_tree_search(problem)
-
-    # print(goal_node.state.board)
+    print(goal_node.state.board)
 
 pass
